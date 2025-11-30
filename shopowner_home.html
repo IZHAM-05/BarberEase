@@ -1,0 +1,314 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Shop Owner Dashboard | BarberEase{% endblock %}
+
+{% block head %}
+<style>
+  .owner-dashboard {
+    display: flex;
+    min-height: 80vh;
+    gap: 0;
+  }
+  .sidebar {
+    width: 230px;
+    background: #0f172a;
+    padding: 36px 0 0 0;
+    color: #fff;
+    min-height: 80vh;
+    border-radius: 16px 0 0 16px;
+    box-shadow: 3px 0 16px rgba(0,0,0,0.04);
+    position: relative;
+  }
+  .sidebar h3 {
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 34px;
+    font-size: 1.2rem;
+    letter-spacing: 1.1px;
+    color: #0ff;
+  }
+  .sidebar ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0 0 24px 0;
+  }
+  .sidebar li {
+    margin-bottom: 12px;
+  }
+  .sidebar a {
+    display: block;
+    color: #fff;
+    padding: 12px 28px;
+    text-decoration: none;
+    border-radius: 0 24px 24px 0;
+    transition: background .18s;
+    font-weight: 500;
+    font-size: 1.01rem;
+  }
+  .sidebar a.active, .sidebar a:hover {
+    background: linear-gradient(90deg, #0ff 0%, #38bdf8 100%);
+    color: #0f172a;
+    font-weight: 700;
+  }
+
+  .main-content {
+    flex: 1;
+    padding: 36px 36px 24px 36px;
+    background: #f3f6fc;
+    border-radius: 0 16px 16px 0;
+  }
+  .shop-card {
+    display: flex;
+    align-items: center;
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 4px 24px rgba(12,32,60,0.04);
+    padding: 26px 28px;
+    gap: 22px;
+    margin-bottom: 32px;
+  }
+  .shop-logo {
+    width: 90px;
+    height: 90px;
+    border-radius: 14px;
+    object-fit: cover;
+    background: #e0e7ef;
+    border: 2px solid #0ff;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.09);
+  }
+  .shop-info h2 {
+    font-size: 1.6rem;
+    margin-bottom: 7px;
+    font-weight: 700;
+    color: #0f172a;
+  }
+  .shop-info p {
+    margin: 0 0 6px 0;
+    color: #64748b;
+    font-size: 1.02rem;
+  }
+  .shop-info .address {
+    font-size: 0.95rem;
+    color: #94a3b8;
+  }
+  .stats-row {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 38px;
+    flex-wrap: wrap;
+  }
+  .stat-card {
+    background: #fff;
+    border-radius: 16px;
+    flex: 1 1 180px;
+    min-width: 170px;
+    text-align: center;
+    padding: 28px 0 18px 0;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.04);
+    margin-bottom: 10px;
+  }
+  .stat-value {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #0e7490;
+    margin-bottom: 7px;
+  }
+  .stat-label {
+    color: #64748b;
+    font-size: 1.03rem;
+    font-weight: 500;
+  }
+  .main-content h4 {
+    margin-top: 30px;
+    font-weight: 700;
+    color: #22223b;
+    margin-bottom: 18px;
+  }
+  .appointments-table, .reviews-list {
+    background: #fff;
+    border-radius: 14px;
+    padding: 18px 18px 6px 18px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+    margin-bottom: 20px;
+  }
+  .appointments-table table {
+    width: 100%;
+    font-size: 0.99rem;
+  }
+  .appointments-table th, .appointments-table td {
+    padding: 8px 10px;
+    text-align: left;
+  }
+  .appointments-table th {
+    color: #64748b;
+    font-weight: 600;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  .appointments-table td {
+    border-bottom: 1px solid #f2f2f2;
+  }
+  .btn-primary {
+    background: linear-gradient(90deg, #0ff 0%, #38bdf8 100%);
+    border: none;
+    color: #0f172a;
+    font-weight: 700;
+    border-radius: 8px;
+    padding: 7px 18px;
+    font-size: 1rem;
+    transition: box-shadow .18s;
+  }
+  .btn-primary:hover {
+    box-shadow: 0 2px 12px #38bdf888;
+  }
+  .review-item {
+    border-bottom: 1px solid #f2f2f2;
+    padding: 7px 0 11px 0;
+  }
+  .review-item:last-child {
+    border-bottom: none;
+  }
+  .review-author {
+    font-weight: 600;
+    color: #0e7490;
+  }
+  .review-rating {
+    color: #fbbf24;
+    font-weight: 600;
+    margin-left: 8px;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="owner-dashboard">
+  <!-- Sidebar Navigation -->
+  <nav class="sidebar">
+    <h3>My Shop</h3>
+    <ul>
+      <li><a href="{% url 'shopowner_home' %}" class="active">Dashboard</a></li>
+      <li><a href="{% url 'manage_services' shop.id %}">Services</a></li>
+      <li><a href="{% url 'manage_shop_images' %}">Manage Shop</a></li>
+      <li><a href="{% url 'owner_appointments' %}">Appointments</a></li>
+      <!-- <li><a href="{% url 'shop_detail' shop.id %}">Public Shop Page</a></li> -->
+      <li><a href="{% url 'owner_reports' %}">Shop Reports</a></li>
+      <li><a href="{% url 'logout' %}">Logout</a></li>
+    </ul>
+  </nav>
+
+  <!-- Main Dashboard Content -->
+  <div class="main-content">
+    <!-- Shop Card -->
+    <div class="shop-card">
+      <img class="shop-logo" src="{% if shop.images.first %}{{ shop.images.first.image.url }}{% else %}{% static 'images/default_shop.png' %}{% endif %}" alt="Shop Logo">
+      <div class="shop-info">
+        <h2>{{ shop.shop_name }}</h2>
+        <p class="address">{{ shop.shop_address|default:"No address provided" }}</p>
+        <p>
+          <span>📞 {{ shop.phone|default:"-" }}</span> &nbsp; | &nbsp;
+          <span>⏰ {{ shop.opening_time|default:"--:--" }} - {{ shop.closing_time|default:"--:--" }}</span>
+        </p>
+      </div>
+      <div>
+        <a href="{% url 'manage_shop_images' %}" class="btn btn-primary">Edit Shop</a>
+      </div>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-value">{{ appointments.count }}</div>
+        <div class="stat-label">Appointments</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">{{ services.count }}</div>
+        <div class="stat-label">Services</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">{{ shop.reviews.count }}</div>
+        <div class="stat-label">Reviews</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">{{ shop.images.count }}</div>
+        <div class="stat-label">Shop Images</div>
+      </div>
+    </div>
+
+    <!-- Recent Appointments -->
+    <h4>Recent Appointments</h4>
+    <div class="appointments-table mb-4">
+      {% if appointments %}
+      <table>
+        <thead>
+          <tr>
+            <th>Customer</th>
+            <th>Service</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for app in appointments|slice:":5" %}
+          <tr>
+            <td>{{ app.customer.name }}</td>
+            <td>{{ app.service.service_name }}</td>
+            <td>{{ app.date }}</td>
+            <td>{{ app.time }}</td>
+          <td>
+            {% if app.status == 0 %}
+              <span class="badge bg-warning">Pending</span>
+            {% elif app.status == 1 %}
+              <span class="badge bg-success">Approved</span>
+            {% elif app.status == 2 %}
+              <span class="badge bg-danger">Rejected</span>
+            {% elif app.status == 3 %}
+              <span class="badge bg-info">Completed</span>
+            {% endif %}
+          </td>
+            <td>
+              {% if app.status == 0 %}
+                <a href="{% url 'approve_appointment' app.id %}" class="btn btn-success btn-sm">Approve</a>
+                <a href="{% url 'reject_appointment' app.id %}" class="btn btn-danger btn-sm ms-1">Reject</a>
+              {% elif app.status == 1 %}
+                <a href="{% url 'complete_appointment' app.id %}" class="btn btn-info btn-sm ms-1">Mark as Completed</a>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <p class="text-muted mb-0">No recent appointments.</p>
+      {% endif %}
+      <div class="mt-2 text-end">
+        <a href="{% url 'owner_appointments' %}" class="btn btn-primary btn-sm">View All</a>
+      </div>
+    </div>
+
+    <!-- Recent Reviews -->
+    <h4>Recent Reviews</h4>
+    <div class="reviews-list">
+      {% for rev in shop.reviews.all|slice:":3" %}
+        <div class="review-item">
+          <span class="review-author">{{ rev.customer.name }}</span>
+          <span class="review-rating">⭐ {{ rev.rating }}/5</span>
+          <div class="mt-1">{{ rev.comment|default:"No comment." }}</div>
+          <small class="text-muted">{{ rev.created_at|date:"M d, Y" }}</small>
+        </div>
+      {% empty %}
+        <p class="text-muted">No reviews yet.</p>
+      {% endfor %}
+      <div class="mt-2 text-end">
+        <!-- <a href="{% url 'shop_detail' shop.id %}#reviews" class="btn btn-primary btn-sm">See All</a> -->
+      </div>
+    </div>
+
+    <!-- CTA Row -->
+    <div class="mt-4 text-center">
+      <a href="{% url 'manage_services' shop.id %}" class="btn btn-primary btn-lg">+ Add New Service</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

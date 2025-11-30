@@ -1,0 +1,277 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Manage Shops | BarberEase Admin{% endblock %}
+
+{% block head %}
+<style>
+  .admin-manage-shops {
+    display: flex;
+    min-height: 80vh;
+    gap: 0;
+  }
+  .sidebar {
+    width: 230px;
+    background: #0f172a;
+    padding: 36px 0 0 0;
+    color: #fff;
+    min-height: 80vh;
+    border-radius: 16px 0 0 16px;
+    box-shadow: 3px 0 16px rgba(0,0,0,0.04);
+    position: relative;
+  }
+  .sidebar h3 {
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 34px;
+    font-size: 1.2rem;
+    letter-spacing: 1.1px;
+    color: #0ff;
+  }
+  .sidebar ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0 0 24px 0;
+  }
+  .sidebar li {
+    margin-bottom: 12px;
+  }
+  .sidebar a {
+    display: block;
+    color: #fff;
+    padding: 12px 28px;
+    text-decoration: none;
+    border-radius: 0 24px 24px 0;
+    transition: background .18s;
+    font-weight: 500;
+    font-size: 1.01rem;
+  }
+  .sidebar a.active, .sidebar a:hover {
+    background: linear-gradient(90deg, #0ff 0%, #38bdf8 100%);
+    color: #0f172a;
+    font-weight: 700;
+  }
+  .main-content {
+    flex: 1;
+    padding: 36px 36px 24px 36px;
+    background: #f3f6fc;
+    border-radius: 0 16px 16px 0;
+  }
+  .stats-row {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 35px;
+    flex-wrap: wrap;
+  }
+  .stat-card {
+    background: #fff;
+    border-radius: 16px;
+    flex: 1 1 170px;
+    min-width: 145px;
+    text-align: center;
+    padding: 24px 0 14px 0;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.04);
+    margin-bottom: 10px;
+  }
+  .stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #0e7490;
+    margin-bottom: 4px;
+  }
+  .stat-label {
+    color: #64748b;
+    font-size: 1.03rem;
+    font-weight: 500;
+  }
+  .section-title {
+    margin-top: 28px;
+    font-weight: 700;
+    color: #22223b;
+    margin-bottom: 16px;
+    letter-spacing: 1px;
+  }
+  .shop-cards-row {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin-bottom: 30px;
+  }
+  .shop-card {
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 8px 30px rgba(12,32,60,0.07);
+    width: 350px;
+    min-width: 310px;
+    max-width: 100%;
+    padding: 0 0 18px 0;
+    margin-bottom: 16px;
+    transition: transform .17s;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .shop-card:hover {transform: scale(1.04);}
+  .shop-card img {
+    width: 100%;
+    border-radius: 18px 18px 0 0;
+    height: 142px;
+    object-fit: cover;
+    background: #e0e7ef;
+  }
+  .shop-card-body {padding: 20px 18px 0 18px;}
+  .shop-card h5 {font-weight: 700;}
+  .shop-owner {
+    color: #0e7490;
+    font-weight: 600;
+    margin-bottom: 3px;
+  }
+  .shop-info {
+    color: #64748b;
+    font-size: 0.97rem;
+    margin-bottom: 4px;
+  }
+  .shop-card-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 11px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .btn-approve, .btn-reject {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    outline: none;
+    transition: box-shadow .18s;
+    box-shadow: 0 2px 10px #38bdf822;
+  }
+  .btn-approve {
+    background: linear-gradient(90deg,#0ff,#38d99f);
+    color: #0f172a;
+  }
+  .btn-approve:hover {
+    box-shadow: 0 2px 18px #22c55e77;
+    background: linear-gradient(90deg,#38d99f, #0ff);
+  }
+  .btn-reject {
+    background: linear-gradient(90deg,#f87171,#fbbf24);
+    color: #fff;
+  }
+  .btn-reject:hover {
+    box-shadow: 0 2px 18px #f8717177;
+    background: linear-gradient(90deg,#fbbf24, #f87171);
+  }
+  @media (max-width: 900px) {
+    .admin-manage-shops { flex-direction: column; }
+    .sidebar {
+      width: 100%;
+      border-radius: 16px 16px 0 0;
+      min-height: fit-content;
+      margin-bottom: 24px;
+    }
+    .main-content {
+      border-radius: 0 0 16px 16px;
+      padding: 24px 7vw 24px 7vw;
+    }
+    .stats-row, .shop-cards-row {
+      flex-direction: column;
+      gap: 14px;
+    }
+    .shop-card {width: 100%; min-width:unset;}
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-manage-shops">
+  <!-- Sidebar Navigation -->
+  <nav class="sidebar">
+    <h3>Admin</h3>
+    <ul>
+      <li><a href="{% url 'Admin_home' %}">Dashboard</a></li>
+      <li><a href="{% url 'manage_shops' %}" class="active">Manage Shops</a></li>
+      <li><a href="{% url 'manage_customers' %}">Customers</a></li>
+      <li><a href="{% url 'manage_appointments' %}">Appointments</a></li>
+      <li><a href="{% url 'reports' %}">Reports</a></li>
+      <li><a href="{% url 'logout' %}">Logout</a></li>
+    </ul>
+  </nav>
+
+  <div class="main-content">
+    <!-- Stats Row -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-value">{{ pending_shops.count }}</div>
+        <div class="stat-label">Pending Shops</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">{{ approved_shops.count }}</div>
+        <div class="stat-label">Approved Shops</div>
+      </div>
+    </div>
+
+    <!-- Pending Shops -->
+    <div>
+      <div class="section-title">Pending Shops</div>
+      {% if pending_shops %}
+      <div class="shop-cards-row">
+        {% for shop in pending_shops %}
+        <div class="shop-card glass">
+          <!-- Only the image and card body are clickable -->
+          <a href="{% url 'admin_shop_detail' shop.id %}" style="text-decoration:none;color:inherit;display:block;">
+            <img src="{% if shop.images.first %}{{ shop.images.first.image.url }}{% else %}{% static 'images/default_shop.png' %}{% endif %}" alt="{{ shop.shop_name }}">
+            <div class="shop-card-body">
+              <h5>{{ shop.shop_name }}</h5>
+              <div class="shop-owner">Owner: {{ shop.usrname.username }}</div>
+              <div class="shop-info">Email: {{ shop.email }}</div>
+              <div class="shop-info">Phone: {{ shop.phone }}</div>
+              <div class="shop-info">Requested: {{ shop.created_at|date:"M d, Y" }}</div>
+            </div>
+          </a>
+          <div class="shop-card-actions mt-2">
+            <a href="{% url 'approve_shop' shop.id %}" class="btn-approve" title="Approve">&#10003;</a>
+            <a href="{% url 'reject_shop' shop.id %}" class="btn-reject" title="Reject">&#10060;</a>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+        <p class="text-muted">No pending shops right now.</p>
+      {% endif %}
+    </div>
+
+    <!-- Approved Shops -->
+    <div>
+      <div class="section-title mt-4">Approved Shops</div>
+      {% if approved_shops %}
+      <div class="shop-cards-row">
+        {% for shop in approved_shops %}
+        <div class="shop-card glass">
+         <a href="{% url 'admin_shop_detail' shop.id %}" style="text-decoration:none;color:inherit;display:block;">
+          <img src="{% if shop.images.first %}{{ shop.images.first.image.url }}{% else %}{% static 'images/default_shop.png' %}{% endif %}" alt="{{ shop.shop_name }}">
+          <div class="shop-card-body">
+            <h5>{{ shop.shop_name }}</h5>
+            <div class="shop-owner">Owner: {{ shop.usrname.username }}</div>
+            <div class="shop-info">Email: {{ shop.email }}</div>
+            <div class="shop-info">Phone: {{ shop.phone }}</div>
+            <div class="shop-info">Address: {{ shop.shop_address|default:"-" }}</div>
+            <div class="shop-info">Services: {{ shop.services.count }}</div>
+            <div class="shop-info">Appointments: {{ shop.appointments.count }}</div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+        <p class="text-muted">No approved shops yet.</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

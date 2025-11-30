@@ -1,0 +1,283 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Manage Appointments | BarberEase Admin{% endblock %}
+
+{% block head %}
+<style>
+  .admin-manage-appointments {
+    display: flex;
+    min-height: 80vh;
+    gap: 0;
+  }
+  .sidebar {
+    width: 230px;
+    background: #0f172a;
+    padding: 36px 0 0 0;
+    color: #fff;
+    min-height: 80vh;
+    border-radius: 16px 0 0 16px;
+    box-shadow: 3px 0 16px rgba(0,0,0,0.04);
+    position: relative;
+  }
+  .sidebar h3 {
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 34px;
+    font-size: 1.2rem;
+    letter-spacing: 1.1px;
+    color: #0ff;
+  }
+  .sidebar ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0 0 24px 0;
+  }
+  .sidebar li {
+    margin-bottom: 12px;
+  }
+  .sidebar a {
+    display: block;
+    color: #fff;
+    padding: 12px 28px;
+    text-decoration: none;
+    border-radius: 0 24px 24px 0;
+    transition: background .18s;
+    font-weight: 500;
+    font-size: 1.01rem;
+  }
+  .sidebar a.active, .sidebar a:hover {
+    background: linear-gradient(90deg, #0ff 0%, #38bdf8 100%);
+    color: #0f172a;
+    font-weight: 700;
+  }
+  .main-content {
+    flex: 1;
+    padding: 36px 36px 24px 36px;
+    background: #f3f6fc;
+    border-radius: 0 16px 16px 0;
+  }
+  .stats-row {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+  }
+  .stat-card {
+    background: #fff;
+    border-radius: 16px;
+    flex: 1 1 170px;
+    min-width: 145px;
+    text-align: center;
+    padding: 24px 0 14px 0;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.04);
+    margin-bottom: 10px;
+  }
+  .stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #0e7490;
+    margin-bottom: 4px;
+  }
+  .stat-label {
+    color: #64748b;
+    font-size: 1.03rem;
+    font-weight: 500;
+  }
+  .filter-row {
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+    align-items: center;
+  }
+  .filter-row input, .filter-row select {
+    border-radius: 8px;
+    border: 1px solid #bde6fd;
+    padding: 7px 12px;
+    font-size: 1rem;
+    min-width: 140px;
+  }
+  .appointments-table {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.04);
+    padding: 12px 12px 6px 12px;
+    overflow-x: auto;
+  }
+  .appointments-table table {
+    width: 100%;
+    min-width: 900px;
+    font-size: 0.98rem;
+  }
+  .appointments-table th, .appointments-table td {
+    padding: 9px 10px;
+    text-align: left;
+    white-space: nowrap;
+  }
+  .appointments-table th {
+    color: #64748b;
+    font-weight: 600;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  .appointments-table td {
+    border-bottom: 1px solid #f2f2f2;
+    vertical-align: middle;
+  }
+  .badge-status {
+    border-radius: 12px;
+    font-size: 0.97rem;
+    font-weight: 600;
+    padding: 2px 11px;
+    color: #fff;
+    background: #64748b;
+  }
+  .badge-status.pending { background: #fbbf24; color: #0f172a; }
+  .badge-status.approved { background: #22c55e; }
+  .badge-status.rejected { background: #ef4444; }
+  .btn-approve, .btn-reject {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    font-size: 1.05rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    outline: none;
+    transition: box-shadow .18s;
+    margin-right: 4px;
+    margin-bottom: 2px;
+  }
+  .btn-approve {
+    background: linear-gradient(90deg,#0ff,#38d99f);
+    color: #0f172a;
+  }
+  .btn-approve:hover {
+    box-shadow: 0 2px 18px #22c55e77;
+    background: linear-gradient(90deg,#38d99f, #0ff);
+  }
+  .btn-reject {
+    background: linear-gradient(90deg,#f87171,#fbbf24);
+    color: #fff;
+  }
+  .btn-reject:hover {
+    box-shadow: 0 2px 18px #f8717177;
+    background: linear-gradient(90deg,#fbbf24, #f87171);
+  }
+  @media (max-width: 900px) {
+    .admin-manage-appointments { flex-direction: column; }
+    .sidebar {
+      width: 100%;
+      border-radius: 16px 16px 0 0;
+      min-height: fit-content;
+      margin-bottom: 24px;
+    }
+    .main-content {
+      border-radius: 0 0 16px 16px;
+      padding: 24px 7vw 24px 7vw;
+    }
+    .stats-row, .filter-row { flex-direction: column; gap: 12px;}
+    .appointments-table { padding: 8px 2px 4px 2px;}
+    .appointments-table table { min-width: 700px;}
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-manage-appointments">
+  <!-- Sidebar Navigation -->
+  <nav class="sidebar">
+    <h3>Admin</h3>
+    <ul>
+      <li><a href="{% url 'Admin_home' %}">Dashboard</a></li>
+      <li><a href="{% url 'manage_shops' %}">Manage Shops</a></li>
+      <li><a href="{% url 'manage_customers' %}">Customers</a></li>
+      <li><a href="{% url 'manage_appointments' %}" class="active">Appointments</a></li>
+      <li><a href="{% url 'reports' %}">Reports</a></li>
+      <li><a href="{% url 'logout' %}">Logout</a></li>
+    </ul>
+  </nav>
+  <div class="main-content">
+    <!-- Stats Row -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-value">{{ appointments|length }}</div>
+        <div class="stat-label">Total Appointments</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">{{ pending_count }}</div>
+        <div class="stat-label">Pending</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">{{ approved_count }}</div>
+        <div class="stat-label">Approved</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">{{ rejected_count }}</div>
+        <div class="stat-label">Rejected</div>
+      </div>
+    </div>
+    <!-- Filter/Search Bar -->
+    <form class="filter-row mb-2" method="get">
+      <input type="text" name="search" value="{{ request.GET.search }}" placeholder="Search by customer, shop..." />
+      <select name="status">
+        <option value="">All Status</option>
+        <option value="0" {% if request.GET.status == "0" %}selected{% endif %}>Pending</option>
+        <option value="1" {% if request.GET.status == "1" %}selected{% endif %}>Approved</option>
+        <option value="2" {% if request.GET.status == "2" %}selected{% endif %}>Rejected</option>
+        <option value="3" {% if request.GET.status == "3" %}selected{% endif %}>Completed</option>
+      </select>
+      <button class="btn btn-primary" type="submit">Filter</button>
+    </form>
+    <!-- Appointments Table -->
+    <div class="appointments-table">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Customer</th>
+            <th>Shop</th>
+            <th>Service</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Status</th>
+            <th>Requested</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for app in appointments %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>
+              <span class="fw-bold">{{ app.customer.name }}</span><br>
+              <span class="text-muted small">{{ app.customer.usrname.username }}</span>
+            </td>
+            <td>{{ app.shop.shop_name }}</td>
+            <td>{{ app.service.service_name }}</td>
+            <td>{{ app.date }}</td>
+            <td>{{ app.time }}</td>
+          <td>
+              {% if app.status == 0 %}
+                <span class="badge bg-warning">Pending</span>
+              {% elif app.status == 1 %}
+                <span class="badge bg-success">Approved</span>
+              {% elif app.status == 2 %}
+                <span class="badge bg-danger">Rejected</span>
+              {% elif app.status == 3 %}
+                <span class="badge bg-info">Completed</span>
+              {% endif %}
+            </td>
+            <td>{{ app.created_at|date:"M d, Y H:i" }}</td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="9" class="text-muted text-center py-3">No appointments found.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

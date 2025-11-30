@@ -1,0 +1,316 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ shop.shop_name }} | BarberEase{% endblock %}
+
+{% block head %}
+<style>
+  .shop-dashboard {
+    display: flex;
+    min-height: 75vh;
+    gap: 0;
+  }
+  .sidebar {
+    width: 220px;
+    background: #0f172a;
+    padding: 36px 0 0 0;
+    color: #fff;
+    min-height: 75vh;
+    border-radius: 16px 0 0 16px;
+    box-shadow: 3px 0 16px rgba(0,0,0,0.04);
+    position: relative;
+  }
+  .sidebar h3 {
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 34px;
+    font-size: 1.2rem;
+    letter-spacing: 1.1px;
+    color: #0ff;
+  }
+  .sidebar ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0 0 24px 0;
+  }
+  .sidebar li {
+    margin-bottom: 12px;
+  }
+  .sidebar a {
+    display: block;
+    color: #fff;
+    padding: 12px 28px;
+    text-decoration: none;
+    border-radius: 0 24px 24px 0;
+    transition: background .18s;
+    font-weight: 500;
+    font-size: 1.01rem;
+  }
+  .sidebar a.active, .sidebar a:hover {
+    background: linear-gradient(90deg, #0ff 0%, #38bdf8 100%);
+    color: #0f172a;
+    font-weight: 700;
+  }
+  .main-content {
+    flex: 1;
+    padding: 36px 36px 24px 36px;
+    background: #f3f6fc;
+    border-radius: 0 16px 16px 0;
+  }
+  .shop-header-card {
+    display: flex;
+    gap: 28px;
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 4px 24px rgba(12,32,60,0.06);
+    padding: 26px 28px;
+    margin-bottom: 32px;
+    align-items: center;
+  }
+  .shop-logo {
+    width: 100px;
+    height: 100px;
+    border-radius: 16px;
+    object-fit: cover;
+    background: #e0e7ef;
+    border: 2px solid #0ff;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.09);
+  }
+  .shop-header-info h2 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 7px;
+    color: #0f172a;
+  }
+  .shop-header-info p {
+    margin-bottom: 1px;
+    color: #64748b;
+    font-size: 1rem;
+  }
+  .shop-meta-stats {
+    margin-top: 8px;
+    color: #0e7490;
+    font-weight: 600;
+    font-size: 0.99rem;
+  }
+  .gallery-scroll {
+    display: flex;
+    gap: 14px;
+    overflow-x: auto;
+    padding-bottom: 6px;
+    margin-bottom: 18px;
+  }
+  .gallery-scroll img {
+    width: 140px;
+    height: 90px;
+    object-fit: cover;
+    border-radius: 11px;
+    box-shadow: 0 2px 10px rgba(12,32,60,0.10);
+    border: 2px solid #e0f2fe;
+    background: #e0e7ef;
+    transition: box-shadow .12s;
+    cursor: pointer;
+  }
+  .gallery-scroll img:hover {
+    box-shadow: 0 8px 30px #0ff4;
+    border-color: #0ff;
+  }
+  .services-section, .reviews-section, .add-review-section {
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+    padding: 26px 22px 16px 22px;
+    margin-bottom: 25px;
+  }
+  .services-list {
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+  }
+  .service-card {
+    flex: 1 1 220px;
+    background: #f3f6fc;
+    border-radius: 12px;
+    padding: 16px 12px 12px 12px;
+    text-align: center;
+    margin-bottom: 10px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.04);
+    min-width: 180px;
+    max-width: 260px;
+    border: 1px solid #e0f2fe;
+  }
+  .service-card img {
+    width: 90px; height: 60px; object-fit: cover; border-radius: 8px; margin-bottom: 6px;
+    background: #e0e7ef;
+  }
+  .service-card h5 { font-weight: 700; margin: 6px 0 2px 0; }
+  .service-card .price { color: #0e7490; font-weight: 800; }
+  .service-card .btn { margin-top:10px; }
+  .reviews-section .review {
+    border-bottom: 1px solid #f2f2f2;
+    padding: 14px 0 11px 0;
+  }
+  .reviews-section .review:last-child { border-bottom: none; }
+  .review-name { color: #0e7490; font-weight: 600; }
+  .review-rating { color: #fbbf24; font-weight: 700; margin-left: 8px; }
+  .review-date { color: #9ca3af; font-size: 0.97rem; }
+  .add-review-section h5 { font-weight: 700; color: #0e7490; }
+  .rating-stars {
+    font-size: 2rem; color: #e2e8f0; margin-bottom: 10px; display: flex; flex-direction: row-reverse; justify-content: center; gap: 2px;
+  }
+  .rating-stars input[type="radio"] { display:none; }
+  .rating-stars label { cursor: pointer; color: #e2e8f0; transition: color 0.12s; padding: 0 2px; font-size: 2rem; }
+  .rating-stars input[type="radio"]:checked ~ label,
+  .rating-stars label:hover,
+  .rating-stars label:hover ~ label { color: #fbbf24; }
+  .add-review-section textarea { width: 100%; border-radius: 8px; border: 1px solid #bde6fd; padding: 8px; margin-bottom: 10px; min-height: 60px; font-size: 1rem; }
+  .add-review-section .btn { background: linear-gradient(90deg, #0ff 0%, #38bdf8 100%); color: #0f172a; font-weight: bold; border-radius: 8px; border: none; }
+  @media (max-width: 900px) {
+    .shop-dashboard { flex-direction: column; }
+    .sidebar { width: 100%; border-radius: 16px 16px 0 0; min-height: fit-content; }
+    .main-content { border-radius: 0 0 16px 16px; padding: 24px 7vw 24px 7vw; }
+    .shop-header-card { flex-direction: column; align-items: flex-start; gap:14px;}
+    .services-list { flex-direction: column; gap: 14px; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="shop-dashboard">
+  <!-- Sidebar Navigation -->
+  <nav class="sidebar">
+    <h3>Customer</h3>
+    <ul>
+      <li><a href="{% url 'customer_home' %}">Dashboard</a></li>
+      <li><a href="{% url 'shop_list' %}" class="active">Find Shops</a></li>
+      <li><a href="{% url 'customer_profile' %}">Profile</a></li>
+      <li><a href="{% url 'owner_appointments' %}">Bookings</a></li>
+      <li><a href="{% url 'customer_home' %}#reviews">Your Reviews</a></li>
+      <li><a href="{% url 'logout' %}">Logout</a></li>
+    </ul>
+  </nav>
+  <!-- Main Dashboard Content -->
+  <div class="main-content">
+
+    <a href="{% url 'shop_list' %}" class="btn btn-secondary mb-3">&larr; Back to All Shops</a>
+    <!-- Shop Header Card -->
+    <div class="shop-header-card">
+      <img class="shop-logo" src="{% if shop.images.first %}{{ shop.images.first.image.url }}{% else %}{% static 'images/default_shop.png' %}{% endif %}" alt="{{ shop.shop_name }}">
+      <div class="shop-header-info">
+        <h2>{{ shop.shop_name }}</h2>
+        <p>{{ shop.shop_address|default:"No address available" }}</p>
+        <p>📞 {{ shop.phone|default:"-" }} &nbsp; | &nbsp; ⏰ {{ shop.opening_time|default:"--:--" }} - {{ shop.closing_time|default:"--:--" }}</p>
+        <div class="shop-meta-stats">
+          {{ shop.services.count }} services &nbsp;|&nbsp; {{ shop.reviews.count }} reviews
+        </div>
+      </div>
+    </div>
+    <!-- Gallery -->
+    <div class="gallery-scroll mb-4">
+      {% for img in shop.images.all %}
+        <img src="{{ img.image.url }}" alt="shop photo" class="open-modal" data-img="{{ img.image.url }}">
+      {% empty %}
+        <img src="{% static 'images/default_banner.jpg' %}" alt="default">
+      {% endfor %}
+    </div>
+
+    <!-- Services Section -->
+    <div class="services-section mb-4">
+      <h4 class="mb-3">Services</h4>
+      <div class="services-list">
+        {% for service in shop.services.all %}
+        <div class="service-card">
+          {% if service.image %}
+            <img src="{{ service.image.url }}" alt="{{ service.service_name }}">
+          {% else %}
+            <img src="{% static 'images/default_service.jpg' %}" alt="default service">
+          {% endif %}
+          <h5>{{ service.service_name }}</h5>
+          <div class="price">₹{{ service.price }}</div>
+          <a href="{% url 'book_appointment' shop.id service.id %}" class="btn btn-primary btn-sm mt-2">Book Now</a>
+        </div>
+        {% empty %}
+          <p class="text-muted">No services listed yet.</p>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Reviews Section -->
+    <div class="reviews-section mb-4">
+      <h4 class="mb-3">Customer Reviews</h4>
+      {% for review in shop.reviews.all %}
+        <div class="review">
+          <span class="review-name">{{ review.customer.name }}</span>
+          <span class="review-rating">⭐ {{ review.rating }}/5</span>
+          <span class="review-date ms-2">{{ review.created_at|date:"M d, Y" }}</span>
+          <div class="mt-1">{{ review.comment|default:"No comment." }}</div>
+        </div>
+      {% empty %}
+        <p class="text-muted">No reviews yet.</p>
+      {% endfor %}
+    </div>
+
+    <!-- Add Review Section (inline, only for eligible customers) -->
+    <div class="add-review-section mb-2">
+      <h5>Add Your Review</h5>
+      {% if user.is_authenticated and user.usertype == "Customer" and can_review %}
+        <form method="post" action="">
+          {% csrf_token %}
+          <div class="rating-stars mb-2 text-center">
+            {% for i in "54321" %}
+              <input type="radio" id="star{{i}}" name="rating" value="{{i}}" {% if forloop.first %}checked{% endif %}>
+              <label for="star{{i}}">&#9733;</label>
+            {% endfor %}
+          </div>
+          <textarea name="comment" placeholder="Write your feedback..." required></textarea>
+          <div class="text-end">
+            <button type="submit" class="btn">Submit Review</button>
+          </div>
+        </form>
+      {% elif user.is_authenticated and user.usertype == "Customer" %}
+        <div class="alert alert-info mt-3 mb-0" style="max-width:480px;">
+          {% if not has_appointment %}
+            Book and complete a service at this shop to leave a review!
+          {% elif already_reviewed %}
+            You have already reviewed this shop.
+          {% endif %}
+        </div>
+      {% else %}
+        <div class="alert alert-warning mt-3 mb-0" style="max-width:480px;">
+          Please <a href="{% url 'login' %}">login</a> as a customer to submit a review.
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- Image Modal (Bootstrap) -->
+<div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content" style="background:transparent; border:none;">
+      <div class="modal-body p-0 text-center">
+        <button type="button" class="btn-close position-absolute top-0 end-0 m-3" data-bs-dismiss="modal" aria-label="Close"></button>
+        <img id="modalImage" src="" alt="Large shop image" style="max-width:100%; border-radius:12px; margin:auto;" />
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function(){
+  // Modal logic for gallery images
+  const modalEl = document.getElementById('imageModal');
+  const modalImage = document.getElementById('modalImage');
+  const bsModal = new bootstrap.Modal(modalEl);
+  document.querySelectorAll('.gallery-scroll .open-modal').forEach(img => {
+    img.addEventListener('click', function(e){
+      e.preventDefault();
+      modalImage.src = this.getAttribute('data-img');
+      bsModal.show();
+    });
+  });
+})();
+</script>
+{% endblock %}

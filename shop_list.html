@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Find a Barbershop | BarberEase{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+  <h2 class="mb-3">Find Your Next Barbershop</h2>
+  <!-- Filter/Search Bar -->
+  <form class="row g-2 mb-4" method="get">
+    <div class="col-md-4">
+      <input type="text" class="form-control" name="q" value="{{ request.GET.q }}" placeholder="Search by name, address, or service...">
+    </div>
+    <div class="col-md-3">
+      <select class="form-select" name="service">
+        <option value="">All Services</option>
+        {% for service in services %}
+          <option value="{{ service.id }}" {% if request.GET.service == service.id|stringformat:"s" %}selected{% endif %}>{{ service.service_name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-3">
+      <select class="form-select" name="location">
+        <option value="">All Locations</option>
+        {% for loc in locations %}
+          <option value="{{ loc }}" {% if request.GET.location == loc %}selected{% endif %}>{{ loc }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-2">
+      <button class="btn btn-primary w-100" type="submit">Filter</button>
+    </div>
+  </form>
+
+  <!-- Shop Cards -->
+  <div class="row">
+    {% for shop in shops %}
+      <div class="col-md-4 mb-4">
+        <div class="card h-100">
+          <img src="{% if shop.images.first %}{{ shop.images.first.image.url }}{% else %}{% static 'images/default_shop.png' %}{% endif %}" alt="{{ shop.shop_name }}" class="card-img-top" style="height:160px;object-fit:cover;">
+          <div class="card-body">
+            <h5 class="card-title">{{ shop.shop_name }}</h5>
+            <div class="text-muted mb-2">{{ shop.shop_address }}</div>
+            <!-- Optionally, list services or contact info here -->
+            <a href="{% url 'shop_detail_customer' shop.id %}" class="btn btn-info mt-2">View Details</a>
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <p class="text-muted">No shops found. Try changing your filters!</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

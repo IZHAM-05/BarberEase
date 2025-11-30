@@ -1,0 +1,330 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Customer Dashboard | BarberEase{% endblock %}
+
+{% block head %}
+<style>
+  .customer-dashboard {
+    display: flex;
+    min-height: 80vh;
+    gap: 0;
+  }
+  .sidebar {
+    width: 220px;
+    background: #0f172a;
+    padding: 36px 0 0 0;
+    color: #fff;
+    min-height: 80vh;
+    border-radius: 16px 0 0 16px;
+    box-shadow: 3px 0 16px rgba(0,0,0,0.04);
+    position: relative;
+  }
+  .sidebar h3 {
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 34px;
+    font-size: 1.2rem;
+    letter-spacing: 1.1px;
+    color: #0ff;
+  }
+  .sidebar ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0 0 24px 0;
+  }
+  .sidebar li {
+    margin-bottom: 12px;
+  }
+  .sidebar a {
+    display: block;
+    color: #fff;
+    padding: 12px 28px;
+    text-decoration: none;
+    border-radius: 0 24px 24px 0;
+    transition: background .18s;
+    font-weight: 500;
+    font-size: 1.01rem;
+  }
+  .sidebar a.active, .sidebar a:hover {
+    background: linear-gradient(90deg, #0ff 0%, #38bdf8 100%);
+    color: #0f172a;
+    font-weight: 700;
+  }
+
+  .main-content {
+    flex: 1;
+    padding: 36px 36px 24px 36px;
+    background: #f3f6fc;
+    border-radius: 0 16px 16px 0;
+  }
+
+  .profile-card {
+    display: flex;
+    align-items: center;
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 4px 24px rgba(12,32,60,0.06);
+    padding: 22px 28px;
+    gap: 20px;
+    margin-bottom: 32px;
+  }
+  .profile-pic {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: #dbeafe;
+    border: 2px solid #0ff;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  }
+  .welcome h2 {
+    font-size: 1.3rem;
+    margin-bottom: 6px;
+    font-weight: 700;
+    color: #0f172a;
+  }
+  .welcome p {
+    color: #64748b;
+    font-size: 1rem;
+    margin-bottom: 0;
+  }
+  .stats-row {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 38px;
+    flex-wrap: wrap;
+  }
+  .stat-card {
+    background: #fff;
+    border-radius: 16px;
+    flex: 1 1 160px;
+    min-width: 150px;
+    text-align: center;
+    padding: 22px 0 14px 0;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.03);
+    margin-bottom: 10px;
+  }
+  .stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #0e7490;
+    margin-bottom: 4px;
+  }
+  .stat-label {
+    color: #64748b;
+    font-size: 1.03rem;
+    font-weight: 500;
+  }
+  .main-content h4 {
+    margin-top: 30px;
+    font-weight: 700;
+    color: #22223b;
+    margin-bottom: 18px;
+  }
+  .appointments-table, .reviews-list {
+    background: #fff;
+    border-radius: 14px;
+    padding: 16px 16px 6px 16px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+    margin-bottom: 20px;
+  }
+  .appointments-table table {
+    width: 100%;
+    font-size: 0.97rem;
+  }
+  .appointments-table th, .appointments-table td {
+    padding: 7px 8px;
+    text-align: left;
+  }
+  .appointments-table th {
+    color: #64748b;
+    font-weight: 600;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  .appointments-table td {
+    border-bottom: 1px solid #f2f2f2;
+  }
+  .btn-primary {
+    background: linear-gradient(90deg, #0ff 0%, #38bdf8 100%);
+    border: none;
+    color: #0f172a;
+    font-weight: 700;
+    border-radius: 8px;
+    padding: 7px 18px;
+    font-size: 1rem;
+    transition: box-shadow .18s;
+  }
+  .btn-primary:hover {
+    box-shadow: 0 2px 12px #38bdf888;
+  }
+  .review-item {
+    border-bottom: 1px solid #f2f2f2;
+    padding: 7px 0 11px 0;
+  }
+  .review-item:last-child {
+    border-bottom: none;
+  }
+  .review-shop {
+    font-weight: 600;
+    color: #0e7490;
+  }
+  .review-rating {
+    color: #fbbf24;
+    font-weight: 600;
+    margin-left: 8px;
+  }
+  @media (max-width: 900px) {
+    .customer-dashboard { flex-direction: column; }
+    .sidebar { width: 100%; border-radius: 16px 16px 0 0; min-height: fit-content; }
+    .main-content { border-radius: 0 0 16px 16px; padding: 24px 7vw 24px 7vw; }
+    .stats-row { flex-direction: column; gap: 12px; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="customer-dashboard">
+  <!-- Sidebar Navigation -->
+  <nav class="sidebar">
+    <h3>Customer</h3>
+    <ul>
+      <li><a href="{% url 'customer_home' %}" class="active">Dashboard</a></li>
+      <li><a href="{% url 'customer_profile' %}">Profile</a></li>
+      <li><a href="{% url 'shop_list' %}#appointments">Bookings</a></li>
+      <li><a href="{% url 'customer_home' %}#reviews">Your Reviews</a></li>
+      <li><a href="{% url 'logout' %}">Logout</a></li>
+    </ul>
+  </nav>
+
+  <!-- Main Dashboard Content -->
+  <div class="main-content">
+    <!-- Welcome Card -->
+    <div class="profile-card">
+      <img class="profile-pic" src="{% if customer and customer.profile_pic %}{{ customer.profile_pic.url }}{% else %}{% static 'images/default-avatar.png' %}{% endif %}" alt="Profile Picture">
+      <div class="welcome">
+        <h2>Welcome back{% if customer %}, {{ customer.name }}{% endif %}!</h2>
+        <p>Here's your activity at a glance. Ready to book your next cut?</p>
+      </div>
+      <div style="margin-left:auto;">
+        <a href="{% url 'customer_profile' %}" class="btn btn-primary">Edit Profile</a>
+      </div>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-value">
+          {{ appointments|length }}
+        </div>
+        <div class="stat-label">Total Bookings</div>
+      </div>
+<div class="stat-card">
+  <div class="stat-value">
+    {% if next_appointment %}
+      {{ next_appointment.date }}
+    {% else %}
+      -
+    {% endif %}
+  </div>
+  <div class="stat-label">Next Appointment</div>
+</div>
+      <div class="stat-card">
+        <div class="stat-value">
+          {{ customer.reviews.count|default:"0" }}
+        </div>
+        <div class="stat-label">Reviews Written</div>
+      </div>
+    </div>
+
+    <!-- Quick Book New Appointment Button -->
+    <div class="mb-3 text-center">
+      <a href="#book" class="btn btn-primary btn-lg">+ Book New Appointment</a>
+    </div>
+
+    <!-- Upcoming Appointments -->
+    <h4 id="appointments">Upcoming Appointments</h4>
+    <div class="appointments-table">
+      {% if appointments %}
+      <table>
+        <thead>
+          <tr>
+            <th>Shop</th>
+            <th>Service</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Status</th>
+            <th>Review</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for app in appointments|slice:":5" %}
+          <tr>
+            <td>
+              <a href="{% url 'shop_detail_customer' app.shop.id %}" class="text-primary">{{ app.shop.shop_name }}</a>
+            </td>
+            <td>{{ app.service.service_name }}</td>
+            <td>{{ app.date }}</td>
+            <td>{{ app.time }}</td>
+            <td>
+                {% if app.status == 0 %}
+                  <span class="badge bg-warning">Pending</span>
+                {% elif app.status == 1 %}
+                  <span class="badge bg-success">Approved</span>
+                {% elif app.status == 2 %}
+                  <span class="badge bg-danger">Rejected</span>
+                {% elif app.status == 3 %}
+                  <span class="badge bg-info">Completed</span>
+                {% endif %}
+              </td>
+          <td>
+            {% if app.status == 3 %}  {# Only allow for Completed appointments #}
+              <a href="{% url 'add_review' app.shop.id %}" class="btn btn-sm btn-primary">Add Review</a>
+            {% else %}
+              <span class="text-muted">—</span>
+            {% endif %}
+          </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+        <p class="text-muted mb-0">No upcoming appointments. <a href="#book">Book now</a>!</p>
+      {% endif %}
+    </div>
+
+    <!-- Recent Reviews -->
+    <h4 id="reviews">Recent Reviews</h4>
+    <div class="reviews-list">
+      {% for review in customer.reviews.all|slice:":3" %}
+        <div class="review-item">
+          <span class="review-shop">{{ review.shop.shop_name }}</span>
+          <span class="review-rating">⭐ {{ review.rating }}/5</span>
+          <div class="mt-1">{{ review.comment|default:"No comment." }}</div>
+          <small class="text-muted">{{ review.created_at|date:"M d, Y" }}</small>
+        </div>
+      {% empty %}
+        <p class="text-muted">You haven't left any reviews yet.</p>
+      {% endfor %}
+    </div>
+
+    <!-- Book New Section -->
+    <h4 id="book" class="mt-5">Book a Barbershop</h4>
+    <div class="row g-4">
+      {% for shop in shops %}
+      <div class="col-md-4">
+        <div class="card glass p-3">
+          <img src="{% if shop.images.first %}{{ shop.images.first.image.url }}{% else %}{% static 'images/default_shop.png' %}{% endif %}" class="img-fluid rounded mb-2" alt="{{ shop.shop_name }}">
+          <h5 class="mb-1">{{ shop.shop_name }}</h5>
+          <div class="text-muted small">{{ shop.shop_address|default:"No address" }}</div>
+          <div class="mb-2">Services: {{ shop.services.count }}</div>
+          <a href="{% url 'shop_detail_customer' shop.id %}" class="btn btn-primary btn-sm">View & Book</a>
+        </div>
+      </div>
+      {% empty %}
+        <p class="text-muted">No approved shops available at the moment.</p>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

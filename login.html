@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Login | BarberEase{% endblock %}
+
+{% block head %}
+<style>
+  body {
+    background: linear-gradient(120deg, #f3f6fc 60%, #0f172a 100%);
+    min-height: 100vh;
+  }
+  .login-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 70vh;
+    margin-top: 40px;
+  }
+  .login-card {
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 8px 30px rgba(56,189,248,0.12);
+    padding: 40px 38px 32px 38px;
+    max-width: 420px;
+    margin: 0 auto;
+    width: 100%;
+  }
+  .login-card h2 {
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 18px;
+    background: linear-gradient(90deg, rgb(11, 156, 156), #38bdf8 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .login-card form input {
+    margin-bottom: 18px;
+    border-radius: 12px;
+    border: 1.5px solid #bae6fd;
+    padding: 12px 15px;
+    font-size: 1.08rem;
+    background: #f3f6fc;
+    transition: border .16s;
+  }
+  .login-card form input:focus {
+    border-color: #0ff;
+    background: #e0f7fa;
+    box-shadow: 0 0 8px #38bdf877;
+  }
+  .login-card .btn-login {
+    width: 100%;
+    padding: 12px;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 1.08rem;
+    background: linear-gradient(90deg,#0ff,#38bdf8 100%);
+    color: #0f172a;
+    border: none;
+    box-shadow: 0 2px 18px #38bdf822;
+    margin-bottom: 8px;
+    transition: box-shadow .18s, background .18s;
+  }
+  .login-card .btn-login:hover {
+    box-shadow: 0 4px 24px #38bdf8bb;
+    background: linear-gradient(90deg,#38bdf8,#0ff);
+    color: #222;
+  }
+  .login-card .signup-link {
+    text-align: center;
+    margin-top: 16px;
+    font-size: 1rem;
+  }
+  .login-card .signup-link a {
+    color: #0ff;
+    font-weight: 700;
+    text-decoration: underline;
+    transition: color .14s;
+  }
+  .login-card .signup-link a:hover {
+    color: #38bdf8;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="login-center">
+  <div class="login-card">
+    <h2>Welcome Back</h2>
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+      {% endfor %}
+    {% endif %}
+    <form action="" method="post">
+      {% csrf_token %}
+      <input type="text" name="username" placeholder="Username" required>
+      <input type="password" name="password" placeholder="Password" required>
+      <button type="submit" class="btn-login">Login</button>
+    </form>
+    <div class="signup-link">
+      Don’t have an account?
+      <a href="#" data-bs-toggle="modal" data-bs-target="#signupChoiceModal">Sign Up</a>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="signupChoiceModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content glass p-4">
+      <div class="modal-header border-0">
+        <h5 class="modal-title neon-text">Choose Account Type</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body text-center">
+        <p class="mb-4">Are you signing up as a customer or creating a barbershop profile?</p>
+        <div class="d-flex justify-content-center gap-3">
+          <a href="/signup/customer" class="btn-glow">Customer</a>
+          <a href="/signup/owner" class="btn-glow-outline">Barbershop Owner</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+{% endblock %}
+

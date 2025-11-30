@@ -1,0 +1,234 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Manage Shop - {{ shop.shop_name }} | BarberEase{% endblock %}
+
+{% block head %}
+<style>
+  .owner-manage-images {
+    display: flex;
+    min-height: 80vh;
+    gap: 0;
+  }
+  .sidebar {
+    width: 230px;
+    background: #0f172a;
+    padding: 36px 0 0 0;
+    color: #fff;
+    min-height: 80vh;
+    border-radius: 16px 0 0 16px;
+    box-shadow: 3px 0 16px rgba(0,0,0,0.04);
+    position: relative;
+  }
+  .sidebar h3 {
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 34px;
+    font-size: 1.2rem;
+    letter-spacing: 1.1px;
+    color: #0ff;
+  }
+  .sidebar ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0 0 24px 0;
+  }
+  .sidebar li {
+    margin-bottom: 12px;
+  }
+  .sidebar a {
+    display: block;
+    color: #fff;
+    padding: 12px 28px;
+    text-decoration: none;
+    border-radius: 0 24px 24px 0;
+    transition: background .18s;
+    font-weight: 500;
+    font-size: 1.01rem;
+  }
+  .sidebar a.active, .sidebar a:hover {
+    background: linear-gradient(90deg, #0ff 0%, #38bdf8 100%);
+    color: #0f172a;
+    font-weight: 700;
+  }
+  .main-content {
+    flex: 1;
+    padding: 36px 36px 24px 36px;
+    background: #f3f6fc;
+    border-radius: 0 16px 16px 0;
+  }
+  .section-title {
+    margin-top: 10px;
+    font-weight: 700;
+    color: #22223b;
+    margin-bottom: 18px;
+    letter-spacing: 1px;
+  }
+  .glass-box {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.04);
+    padding: 24px 24px 12px 24px;
+    margin-bottom: 28px;
+  }
+  .gallery-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    margin-top: 8px;
+  }
+  .gallery-item {
+    position: relative;
+    width: 130px;
+    height: 100px;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #e0e7ef;
+    box-shadow: 0 4px 14px rgba(56,189,248,0.10);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 12px;
+    display: block;
+  }
+  .delete-checkbox {
+    position: absolute;
+    top: 7px;
+    right: 7px;
+    background: rgba(255,255,255,0.85);
+    border-radius: 7px;
+    padding: 2px 7px;
+    font-size: 0.95rem;
+    box-shadow: 0 2px 8px #38bdf822;
+  }
+  .btn-success, .btn-danger, .btn-primary {
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1rem;
+    padding: 7px 16px;
+    border: none;
+    transition: box-shadow .15s;
+  }
+  .btn-success {
+    background: linear-gradient(90deg, #0ff,#38bdf8 100%);
+    color: #0f172a;
+  }
+  .btn-danger {
+    background: linear-gradient(90deg, #f87171,#fbbf24 100%);
+    color: #fff;
+  }
+  .btn-primary {
+    background: linear-gradient(90deg, #0ff 0%, #38bdf8 100%);
+    color: #0f172a;
+  }
+  .btn-danger:hover, .btn-success:hover, .btn-primary:hover {
+    box-shadow: 0 2px 12px #38bdf888;
+  }
+  @media (max-width: 900px) {
+    .owner-manage-images { flex-direction: column; }
+    .sidebar { width: 100%; border-radius: 16px 16px 0 0; min-height: fit-content; }
+    .main-content { border-radius: 0 0 16px 16px; padding: 24px 7vw 24px 7vw; }
+    .gallery-row { gap: 10px; }
+    .gallery-item { width: 100px; height: 80px; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="owner-manage-images">
+  <!-- Sidebar Navigation -->
+  <nav class="sidebar">
+    <h3>My Shop</h3>
+    <ul>
+      <li><a href="{% url 'shopowner_home' %}">Dashboard</a></li>
+      <li><a href="{% url 'manage_services' shop.id %}">Services</a></li>
+      <li><a href="{% url 'manage_shop_images' %}" class="active">Manage Shop</a></li>
+      <li><a href="{% url 'owner_appointments' %}">Appointments</a></li>
+      <!-- <li><a href="{% url 'shop_detail' shop.id %}">Public Shop Page</a></li> -->
+      <li><a href="{% url 'owner_reports' %}">Shop Reports</a></li>
+      <li><a href="{% url 'logout' %}">Logout</a></li>
+    </ul>
+  </nav>
+  <div class="main-content">
+    <h2 class="neon-text mb-2">Manage Images for {{ shop.shop_name }}</h2>
+
+    <!-- Shop Info Update -->
+    <div class="glass-box mb-4">
+      <div class="section-title">Shop Details</div>
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="row g-3">
+          <div class="col-md-6 mb-2">
+            <label class="form-label">Shop Name</label>
+            <input type="text" name="shop_name" value="{{ shop.shop_name }}" class="form-control" required>
+          </div>
+          <div class="col-md-6 mb-2">
+            <label class="form-label">Email</label>
+            <input type="email" name="email" value="{{ shop.email }}" class="form-control">
+          </div>
+          <div class="col-md-6 mb-2">
+            <label class="form-label">Phone</label>
+            <input type="text" name="phone" value="{{ shop.phone }}" class="form-control">
+          </div>
+          <div class="col-md-6 mb-2">
+            <label class="form-label">Address</label>
+            <input type="text" name="shop_address" value="{{ shop.shop_address }}" class="form-control">
+          </div>
+          <div class="col-md-6 mb-2">
+            <label class="form-label">Opening Time</label>
+            <input type="time" name="opening_time" value="{{ shop.opening_time|time:'H:i' }}" class="form-control">
+          </div>
+          <div class="col-md-6 mb-2">
+            <label class="form-label">Closing Time</label>
+            <input type="time" name="closing_time" value="{{ shop.closing_time|time:'H:i' }}" class="form-control">
+          </div>
+        </div>
+        <div class="mt-4 text-end">
+          <button type="submit" name="update_shop" class="btn btn-primary">💾 Save Changes</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Upload new images -->
+    <div class="glass-box mb-4">
+      <div class="section-title">Upload New Images</div>
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="file" name="images" multiple accept="image/*" class="form-control">
+        <div class="mt-3 text-end">
+          <button type="submit" name="upload_images" class="btn btn-success">⬆️ Upload</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Display existing images with delete option -->
+    <div class="glass-box mb-4">
+      <div class="section-title">Manage Existing Images</div>
+      <form method="post">
+        {% csrf_token %}
+        <div class="gallery-row">
+          {% for img in shop.images.all %}
+            <div class="gallery-item">
+              <img src="{{ img.image.url }}" alt="Shop Image">
+              <div class="delete-checkbox">
+                <input type="checkbox" name="delete_ids" value="{{ img.id }}">
+                <label>Delete</label>
+              </div>
+            </div>
+          {% empty %}
+            <p class="text-muted">No images uploaded yet.</p>
+          {% endfor %}
+        </div>
+        <div class="mt-4 text-end">
+          <button type="submit" name="delete_images" class="btn btn-danger">🗑️ Delete Selected</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

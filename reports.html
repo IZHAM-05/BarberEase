@@ -1,0 +1,225 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Reports & Analytics | BarberEase Admin{% endblock %}
+
+{% block head %}
+<style>
+  .admin-reports {
+    display: flex;
+    min-height: 80vh;
+    gap: 0;
+  }
+  .sidebar {
+    width: 230px;
+    background: #0f172a;
+    padding: 36px 0 0 0;
+    color: #fff;
+    min-height: 80vh;
+    border-radius: 16px 0 0 16px;
+    box-shadow: 3px 0 16px rgba(0,0,0,0.04);
+    position: relative;
+  }
+  .sidebar h3 {
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 34px;
+    font-size: 1.2rem;
+    letter-spacing: 1.1px;
+    color: #0ff;
+  }
+  .sidebar ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0 0 24px 0;
+  }
+  .sidebar li {
+    margin-bottom: 12px;
+  }
+  .sidebar a {
+    display: block;
+    color: #fff;
+    padding: 12px 28px;
+    text-decoration: none;
+    border-radius: 0 24px 24px 0;
+    transition: background .18s;
+    font-weight: 500;
+    font-size: 1.01rem;
+  }
+  .sidebar a.active, .sidebar a:hover {
+    background: linear-gradient(90deg, #0ff 0%, #38bdf8 100%);
+    color: #0f172a;
+    font-weight: 700;
+  }
+  .main-content {
+    flex: 1;
+    padding: 36px 36px 24px 36px;
+    background: #f3f6fc;
+    border-radius: 0 16px 16px 0;
+  }
+  .overview-row {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 38px;
+    flex-wrap: wrap;
+  }
+  .stat-card {
+    background: #fff;
+    border-radius: 16px;
+    flex: 1 1 180px;
+    min-width: 170px;
+    text-align: center;
+    padding: 28px 0 18px 0;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.04);
+    margin-bottom: 10px;
+  }
+  .stat-value {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #0e7490;
+    margin-bottom: 7px;
+  }
+  .stat-label {
+    color: #64748b;
+    font-size: 1.03rem;
+    font-weight: 500;
+  }
+  .section-title {
+    margin-top: 30px;
+    font-weight: 700;
+    color: #22223b;
+    margin-bottom: 18px;
+    letter-spacing: 1px;
+  }
+  .top-shops-row, .top-rated-row {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin-bottom: 30px;
+  }
+  .shop-report-card {
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 8px 30px rgba(12,32,60,0.07);
+    width: 350px;
+    min-width: 280px;
+    max-width: 100%;
+    padding: 0 0 18px 0;
+    margin-bottom: 16px;
+    transition: transform .17s;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .shop-report-card:hover {transform: scale(1.04);}
+  .shop-report-card .card-body {padding: 20px 18px 0 18px;}
+  .shop-report-card h5 {font-weight: 700;}
+  .shop-owner {
+    color: #0e7490;
+    font-weight: 600;
+    margin-bottom: 3px;
+  }
+  .shop-info {
+    color: #64748b;
+    font-size: 0.97rem;
+    margin-bottom: 4px;
+  }
+  @media (max-width: 900px) {
+    .admin-reports { flex-direction: column; }
+    .sidebar {
+      width: 100%;
+      border-radius: 16px 16px 0 0;
+      min-height: fit-content;
+      margin-bottom: 24px;
+    }
+    .main-content {
+      border-radius: 0 0 16px 16px;
+      padding: 24px 7vw 24px 7vw;
+    }
+    .overview-row, .top-shops-row, .top-rated-row {
+      flex-direction: column;
+      gap: 14px;
+    }
+    .shop-report-card {width: 100%; min-width:unset;}
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-reports">
+  <!-- Sidebar Navigation -->
+  <nav class="sidebar">
+    <h3>Admin</h3>
+    <ul>
+      <li><a href="{% url 'Admin_home' %}">Dashboard</a></li>
+      <li><a href="{% url 'manage_shops' %}">Manage Shops</a></li>
+      <li><a href="{% url 'manage_customers' %}">Customers</a></li>
+      <li><a href="{% url 'manage_appointments' %}">Appointments</a></li>
+      <li><a href="{% url 'reports' %}" class="active">Reports</a></li>
+      <li><a href="{% url 'logout' %}">Logout</a></li>
+    </ul>
+  </nav>
+  <div class="main-content">
+    <h2 class="neon-text mb-2">Reports & Analytics</h2>
+    <p class="text-muted mb-4">Platform stats and performance insights</p>
+
+    <!-- Overview Row -->
+    <div class="overview-row">
+      <div class="stat-card">
+        <div class="stat-value">{{ shops_count }}</div>
+        <div class="stat-label">Total Shops</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">{{ customers_count }}</div>
+        <div class="stat-label">Customers</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">{{ appointments_count }}</div>
+        <div class="stat-label">Appointments</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">{{ review_count }}</div>
+        <div class="stat-label">Reviews</div>
+      </div>
+    </div>
+
+    <!-- Top Shops by Appointments -->
+    <div class="section-title">Top 5 Shops by Appointments</div>
+    {% if top_shops %}
+      <div class="top-shops-row">
+        {% for shop in top_shops %}
+          <div class="shop-report-card glass">
+            <div class="card-body">
+              <h5>{{ shop.shop_name }}</h5>
+              <div class="shop-owner">Owner: {{ shop.usrname.username }}</div>
+              <div class="shop-info">Appointments: {{ shop.total_appointments }}</div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="text-muted">No appointment data available yet.</p>
+    {% endif %}
+
+    <!-- Top Shops by Rating -->
+    <div class="section-title">Top 5 Rated Shops</div>
+    {% if top_rated %}
+      <div class="top-rated-row">
+        {% for shop in top_rated %}
+          <div class="shop-report-card glass">
+            <div class="card-body">
+              <h5>{{ shop.shop_name }}</h5>
+              <div class="shop-owner">Owner: {{ shop.usrname.username }}</div>
+              <div class="shop-info">Avg. Rating: {{ shop.avg_rating|floatformat:1 }}/5 ⭐</div>
+              <div class="shop-info">Reviews: {{ shop.reviews.count }}</div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="text-muted">No ratings yet.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

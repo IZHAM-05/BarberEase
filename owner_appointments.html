@@ -1,0 +1,198 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}All Appointments | BarberEase Shop Owner{% endblock %}
+
+{% block head %}
+<style>
+  .owner-appointments-dashboard {
+    display: flex;
+    min-height: 80vh;
+    gap: 0;
+  }
+  .sidebar {
+    width: 230px;
+    background: #0f172a;
+    padding: 36px 0 0 0;
+    color: #fff;
+    min-height: 80vh;
+    border-radius: 16px 0 0 16px;
+    box-shadow: 3px 0 16px rgba(0,0,0,0.04);
+    position: relative;
+  }
+  .sidebar h3 {
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 34px;
+    font-size: 1.2rem;
+    letter-spacing: 1.1px;
+    color: #0ff;
+  }
+  .sidebar ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0 0 24px 0;
+  }
+  .sidebar li {
+    margin-bottom: 12px;
+  }
+  .sidebar a {
+    display: block;
+    color: #fff;
+    padding: 12px 28px;
+    text-decoration: none;
+    border-radius: 0 24px 24px 0;
+    transition: background .18s;
+    font-weight: 500;
+    font-size: 1.01rem;
+  }
+  .sidebar a.active, .sidebar a:hover {
+    background: linear-gradient(90deg, #0ff 0%, #38bdf8 100%);
+    color: #0f172a;
+    font-weight: 700;
+  }
+  .main-content {
+    flex: 1;
+    padding: 36px 36px 24px 36px;
+    background: #f3f6fc;
+    border-radius: 0 16px 16px 0;
+  }
+  .appointments-table {
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+    padding: 18px 18px 8px 18px;
+    margin-bottom: 20px;
+    overflow-x: auto;
+  }
+  .appointments-table table {
+    width: 100%;
+    font-size: 0.99rem;
+  }
+  .appointments-table th, .appointments-table td {
+    padding: 8px 10px;
+    text-align: left;
+    border-bottom: 1px solid #f2f2f2;
+    white-space: nowrap;
+  }
+  .appointments-table th {
+    color: #64748b;
+    font-weight: 600;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  .appointments-table td {
+    vertical-align: middle;
+  }
+  .btn-primary, .btn-success, .btn-danger, .btn-info {
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1rem;
+    padding: 6px 16px;
+    border: none;
+    margin-right: 4px;
+    transition: box-shadow .18s;
+  }
+  .btn-primary {
+    background: linear-gradient(90deg, #0ff 0%, #38bdf8 100%);
+    color: #0f172a;
+  }
+  .btn-success {
+    background: linear-gradient(90deg, #22d3ee 0%, #22c55e 100%);
+    color: #fff;
+  }
+  .btn-danger {
+    background: linear-gradient(90deg, #f87171 0%, #fbbf24 100%);
+    color: #fff;
+  }
+  .btn-info {
+    background: linear-gradient(90deg, #38bdf8 0%, #0ff 100%);
+    color: #0f172a;
+  }
+  .badge {
+    border-radius: 12px;
+    font-size: 0.95rem;
+    padding: 3px 12px;
+    font-weight: 600;
+  }
+  .bg-warning { background: #fbbf24; color: #0f172a; }
+  .bg-success { background: #22c55e; color: #fff; }
+  .bg-danger { background: #ef4444; color: #fff; }
+  .bg-info { background: #38bdf8; color: #0f172a; }
+  @media (max-width: 900px) {
+    .owner-appointments-dashboard { flex-direction: column; }
+    .sidebar { width: 100%; border-radius: 16px 16px 0 0; min-height: fit-content; }
+    .main-content { border-radius: 0 0 16px 16px; padding: 24px 7vw 24px 7vw; }
+    .appointments-table { padding: 8px 2px 4px 2px;}
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="owner-appointments-dashboard">
+  <!-- Sidebar Navigation -->
+  <nav class="sidebar">
+    <h3>My Shop</h3>
+    <ul>
+      <li><a href="{% url 'shopowner_home' %}">Dashboard</a></li>
+      <li><a href="{% url 'manage_services' shop.id %}">Services</a></li>
+      <li><a href="{% url 'manage_shop_images' %}">Manage Shop</a></li>
+      <li><a href="{% url 'owner_appointments' %}" class="active">Appointments</a></li>
+      <!-- <li><a href="{% url 'shop_detail' shop.id %}">Public Shop Page</a></li> -->
+      <li><a href="{% url 'owner_reports' %}">Shop Reports</a></li>
+      <li><a href="{% url 'logout' %}">Logout</a></li>
+    </ul>
+  </nav>
+  <div class="main-content">
+    <h2 class="neon-text mb-2">All Appointments for {{ shop.shop_name }}</h2>
+    <div class="appointments-table">
+      <table>
+        <thead>
+          <tr>
+            <th>Customer</th>
+            <th>Service</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for app in appointments %}
+            <tr>
+              <td>{{ app.customer.name }}</td>
+              <td>{{ app.service.service_name }}</td>
+              <td>{{ app.date }}</td>
+              <td>{{ app.time }}</td>
+              <td>
+                {% if app.status == 0 %}
+                  <span class="badge bg-warning">Pending</span>
+                {% elif app.status == 1 %}
+                  <span class="badge bg-success">Approved</span>
+                {% elif app.status == 2 %}
+                  <span class="badge bg-danger">Rejected</span>
+                {% elif app.status == 3 %}
+                  <span class="badge bg-info">Completed</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if app.status == 0 %}
+                  <a href="{% url 'approve_appointment' app.id %}" class="btn btn-success btn-sm">Approve</a>
+                  <a href="{% url 'reject_appointment' app.id %}" class="btn btn-danger btn-sm">Reject</a>
+                {% elif app.status == 1 %}
+                  <a href="{% url 'complete_appointment' app.id %}" class="btn btn-info btn-sm">Mark as Completed</a>
+                {% else %}
+                  <span class="text-muted">—</span>
+                {% endif %}
+              </td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="6" class="text-muted text-center py-3">No appointments found.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

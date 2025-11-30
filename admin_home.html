@@ -1,0 +1,280 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Admin Dashboard | BarberEase{% endblock %}
+
+{% block head %}
+<style>
+  .admin-dashboard {
+    display: flex;
+    min-height: 80vh;
+    gap: 0;
+  }
+  .sidebar {
+    width: 230px;
+    background: #0f172a;
+    padding: 36px 0 0 0;
+    color: #fff;
+    min-height: 80vh;
+    border-radius: 16px 0 0 16px;
+    box-shadow: 3px 0 16px rgba(0,0,0,0.04);
+    position: relative;
+  }
+  .sidebar h3 {
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 34px;
+    font-size: 1.2rem;
+    letter-spacing: 1.1px;
+    color: #0ff;
+  }
+  .sidebar ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0 0 24px 0;
+  }
+  .sidebar li {
+    margin-bottom: 12px;
+  }
+  .sidebar a {
+    display: block;
+    color: #fff;
+    padding: 12px 28px;
+    text-decoration: none;
+    border-radius: 0 24px 24px 0;
+    transition: background .18s;
+    font-weight: 500;
+    font-size: 1.01rem;
+  }
+  .sidebar a.active, .sidebar a:hover {
+    background: linear-gradient(90deg, #0ff 0%, #38bdf8 100%);
+    color: #0f172a;
+    font-weight: 700;
+  }
+
+  .main-content {
+    flex: 1;
+    padding: 36px 36px 24px 36px;
+    background: #f3f6fc;
+    border-radius: 0 16px 16px 0;
+  }
+  .dashboard-header {
+    margin-bottom: 32px;
+  }
+  .stats-row {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 38px;
+    flex-wrap: wrap;
+  }
+  .stat-card {
+    background: #fff;
+    border-radius: 16px;
+    flex: 1 1 180px;
+    min-width: 170px;
+    text-align: center;
+    padding: 28px 0 18px 0;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.04);
+    margin-bottom: 10px;
+  }
+  .stat-value {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #0e7490;
+    margin-bottom: 7px;
+  }
+  .stat-label {
+    color: #64748b;
+    font-size: 1.03rem;
+    font-weight: 500;
+  }
+  .main-content h4 {
+    margin-top: 30px;
+    font-weight: 700;
+    color: #22223b;
+    margin-bottom: 18px;
+  }
+  .pending-table, .approved-table {
+    background: #fff;
+    border-radius: 14px;
+    padding: 16px 16px 6px 16px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+    margin-bottom: 32px;
+  }
+  .pending-table table, .approved-table table {
+    width: 100%;
+    font-size: 0.97rem;
+  }
+  .pending-table th, .pending-table td,
+  .approved-table th, .approved-table td {
+    padding: 7px 8px;
+    text-align: left;
+  }
+  .pending-table th, .approved-table th {
+    color: #64748b;
+    font-weight: 600;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  .pending-table td, .approved-table td {
+    border-bottom: 1px solid #f2f2f2;
+  }
+  .btn-primary, .btn-success, .btn-danger {
+    background: linear-gradient(90deg, #0ff 0%, #38bdf8 100%);
+    border: none;
+    color: #0f172a;
+    font-weight: 700;
+    border-radius: 8px;
+    padding: 6px 16px;
+    font-size: 1rem;
+    margin-right: 5px;
+    transition: box-shadow .18s;
+  }
+  .btn-success {
+    background: linear-gradient(90deg, #22d3ee 0%, #22c55e 100%);
+    color: #fff;
+  }
+  .btn-danger {
+    background: linear-gradient(90deg, #f87171 0%, #fbbf24 100%);
+    color: #fff;
+  }
+  .btn-sm {
+  border-radius: 50% !important;
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  padding: 0;
+}
+  .btn-primary:hover, .btn-success:hover, .btn-danger:hover {
+    box-shadow: 0 2px 12px #38bdf888;
+  }
+  @media (max-width: 900px) {
+    .admin-dashboard { flex-direction: column; }
+    .sidebar { width: 100%; border-radius: 16px 16px 0 0; min-height: fit-content; }
+    .main-content { border-radius: 0 0 16px 16px; padding: 24px 7vw 24px 7vw; }
+    .stats-row { flex-direction: column; gap: 12px; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-dashboard">
+  <!-- Sidebar Navigation -->
+  <nav class="sidebar">
+    <h3>Admin</h3>
+    <ul>
+      <li><a href="{% url 'Admin_home' %}" class="active">Dashboard</a></li>
+      <li><a href="{% url 'manage_shops' %}">Manage Shops</a></li>
+      <li><a href="{% url 'manage_customers' %}">Customers</a></li>
+      <li><a href="{% url 'manage_appointments' %}">Appointments</a></li>
+      <li><a href="{% url 'reports' %}">Reports</a></li>
+      <li><a href="{% url 'logout' %}">Logout</a></li>
+    </ul>
+  </nav>
+
+  <!-- Main Dashboard Content -->
+  <div class="main-content">
+    <div class="dashboard-header">
+      <h2 class="neon-text">Admin Dashboard</h2>
+      <p class="text-muted mb-0">Welcome, Admin! Here’s your platform overview and quick actions.</p>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-value">{{ shops_count }}</div>
+        <div class="stat-label">Total Shops</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">{{ customers_count }}</div>
+        <div class="stat-label">Customers</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">{{ appointments_count }}</div>
+        <div class="stat-label">Appointments</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">{{ review_count }}</div>
+        <div class="stat-label">Reviews</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">{{ pending_shops_count }}</div>
+        <div class="stat-label">Pending Shops</div>
+      </div>
+    </div>
+
+    <!-- Pending Shop Approvals -->
+    <h4>Pending Shop Approvals</h4>
+    <div class="pending-table">
+      {% if pending_shops %}
+      <table>
+        <thead>
+          <tr>
+            <th>Shop</th>
+            <th>Owner</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Requested On</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for shop in pending_shops %}
+          <tr>
+            <td>{{ shop.shop_name }}</td>
+            <td>{{ shop.usrname.username }}</td>
+            <td>{{ shop.email }}</td>
+            <td>{{ shop.phone }}</td>
+            <td>{{ shop.created_at|date:"M d, Y" }}</td>
+            <td>
+             <a href="{% url 'approve_shop' shop.id %}" class="btn btn-success btn-sm btn-approve" title="Approve">&#10003;</a>
+              <a href="{% url 'reject_shop' shop.id %}" class="btn btn-danger btn-sm btn-reject" title="Reject">&#10060;</a>
+            </td>  
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <p class="text-muted mb-0">No pending shops at the moment.</p>
+      {% endif %}
+    </div>
+
+    <!-- Recent Approved Shops -->
+    <h4>Recently Approved Shops</h4>
+    <div class="approved-table">
+      {% if approved_shops %}
+      <table>
+        <thead>
+          <tr>
+            <th>Shop</th>
+            <th>Owner</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Address</th>
+            <th>Services</th>
+            <th>Appointments</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for shop in approved_shops|slice:":5" %}
+          <tr>
+            <td>{{ shop.shop_name }}</td>
+            <td>{{ shop.usrname.username }}</td>
+            <td>{{ shop.email }}</td>
+            <td>{{ shop.phone }}</td>
+            <td>{{ shop.shop_address }}</td>
+            <td>{{ shop.services.count }}</td>
+            <td>{{ shop.appointments.count }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <p class="text-muted mb-0">No approved shops yet.</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

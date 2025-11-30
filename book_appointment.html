@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Book Appointment | BarberEase{% endblock %}
+
+{% block head %}
+<style>
+  .slot-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px 14px;
+    margin-top: 10px;
+    margin-bottom: 18px;
+  }
+  .slot-radio {
+    display: none;
+  }
+  .slot-label {
+    min-width: 85px;
+    padding: 14px 0;
+    border-radius: 12px;
+    border: 2px solid #0e7490;
+    background: #f0fdff;
+    color: #0e7490;
+    font-size: 1.15rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+    outline: none;
+    transition: all .13s;
+    margin-bottom: 0;
+    user-select: none;
+    text-shadow: none;
+    box-shadow: none;
+  }
+  .slot-radio:checked + .slot-label,
+  .slot-label.selected {
+    background: linear-gradient(90deg, #0ff, #38bdf8);
+    color: #22223b;
+    border-color: #38bdf8;
+    box-shadow: 0 0 0 3px #bae6fd77;
+  }
+  .slot-label.disabled {
+    background: #e2e8f0;
+    color: #64748b;
+    border: 2px solid #cbd5e1;
+    cursor: not-allowed;
+    pointer-events: none;
+    opacity: .65;
+    position: relative;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+  <h2 class="mb-2">Book Appointment at {{ shop.shop_name }}</h2>
+  <h4 class="mb-4">Service: {{ service.service_name }}</h4>
+
+  <!-- Date selection -->
+  <form method="get" class="row g-3 mb-4">
+    <div class="col-auto">
+      <label for="date" class="col-form-label">Pick a Date</label>
+    </div>
+    <div class="col-auto">
+      <input type="date" name="date" id="date" class="form-control" value="{{ date_selected }}" required>
+    </div>
+    <div class="col-auto">
+      <button type="submit" class="btn btn-info">Show Slots</button>
+    </div>
+  </form>
+
+  {% if date_selected %}
+    <form method="post">
+      {% csrf_token %}
+      <input type="hidden" name="date" value="{{ date_selected }}">
+      <div class="slot-grid-label mb-2">
+        Available Slots for {{ date_selected }}:
+      </div>
+      <div class="slot-grid">
+        {% for slot in available_slots %}
+          <input type="radio" name="slot" value="{{ slot }}" id="slot_{{ forloop.counter }}" class="slot-radio" required>
+          <label for="slot_{{ forloop.counter }}" class="slot-label">{{ slot }}</label>
+        {% endfor %}
+        {% if available_slots|length == 0 %}
+          <div class="text-danger" style="font-size:1rem;">No slots available for this day.</div>
+        {% endif %}
+      </div>
+      {% if available_slots|length > 0 %}
+        <button type="submit" class="btn btn-success mt-2">Book Appointment</button>
+      {% endif %}
+      <a href="{% url 'shop_detail_customer' shop.id %}" class="btn btn-secondary mt-2">Back</a>
+    </form>
+  {% endif %}
+</div>
+{% endblock %}

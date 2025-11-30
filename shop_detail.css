@@ -1,0 +1,53 @@
+body {
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #0a0f1f, #001f3f, #003366);
+  color: #fff;
+}
+
+.neon-text {
+  background: linear-gradient(90deg, #0ff, #ff00ff);
+  -webkit-background-clip: text;
+    background-clip: text;
+
+  -webkit-text-fill-color: transparent;
+}
+
+.shop-logo {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border: 3px solid #0ff;
+}
+
+.shop-image {
+  max-height: 350px;
+  object-fit: cover;
+  border-radius: 15px;
+}
+
+.card.glass {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.15);
+  backdrop-filter: blur(12px);
+  border-radius: 15px;
+}
+
+.btn-future-sm {
+  padding: 8px 15px;
+  border-radius: 25px;
+  border: none;
+  font-weight: bold;
+  color: #fff;
+  background: linear-gradient(90deg, #00f, #0ff);
+  box-shadow: 0 0 10px rgba(0,255,255,0.6);
+  text-decoration: none;
+}
+
+.btn-future-sm:hover {
+  box-shadow: 0 0 20px rgba(0,255,255,1);
+  transform: scale(1.05);
+}
+
+.default-slide {
+    background-image: url("../images/default_banner.jpg");
+}

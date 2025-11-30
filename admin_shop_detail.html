@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Shop Details | BarberEase Admin{% endblock %}
+
+{% block head %}
+<style>
+.detail-container {
+  max-width: 800px;
+  margin: 36px auto;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 8px 30px rgba(12,32,60,0.07);
+  padding: 36px 32px 32px 32px;
+}
+.detail-title {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #0e7490;
+  margin-bottom: 12px;
+}
+.detail-section-title {
+  font-weight: 700;
+  margin-top: 24px;
+  margin-bottom: 10px;
+  color: #22223b;
+}
+.detail-info-list {
+  list-style:none;
+  padding-left:0;
+  margin-bottom: 0;
+}
+.detail-info-list li {
+  margin-bottom: 10px;
+  font-size: 1.08rem;
+  color: #444;
+}
+.detail-images-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.detail-images-row img {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 2px solid #bae6fd;
+  background: #e0e7ef;
+  transition: box-shadow .18s;
+}
+.detail-images-row img:hover {
+  box-shadow: 0 2px 18px #38bdf8bb;
+  border-color: #0ff;
+}
+.license-img {
+  width: 170px;
+  height: 110px;
+  object-fit: contain;
+  border-radius: 8px;
+  border: 2px solid #0ff;
+  background: #e0e7ef;
+}
+.detail-actions {
+  margin-top: 30px;
+  display: flex;
+  gap: 14px;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="detail-container">
+  <div class="detail-title">{{ shop.shop_name }}</div>
+  <ul class="detail-info-list">
+    <li><strong>Owner:</strong> {{ shop.usrname.username }}</li>
+    <li><strong>Email:</strong> {{ shop.email }}</li>
+    <li><strong>Phone:</strong> {{ shop.phone }}</li>
+    <li><strong>Address:</strong> {{ shop.shop_address }}</li>
+    <li><strong>Opening Time:</strong> {{ shop.opening_time|default:"--:--" }}</li>
+    <li><strong>Closing Time:</strong> {{ shop.closing_time|default:"--:--" }}</li>
+    <li><strong>Requested On:</strong> {{ shop.created_at|date:"M d, Y H:i" }}</li>
+    <li><strong>Status:</strong>
+      {% if shop.is_approved %}
+        <span style="color:#22c55e;font-weight:700;">Approved</span>
+      {% else %}
+        <span style="color:#fbbf24;font-weight:700;">Pending</span>
+      {% endif %}
+    </li>
+  </ul>
+
+  <div class="detail-section-title">License Image</div>
+  {% if shop.license_image %}
+    <a href="{{ shop.license_image.url }}" target="_blank">
+      <img src="{{ shop.license_image.url }}" class="license-img" alt="Shop License">
+    </a>
+  {% else %}
+    <span class="text-muted">No license uploaded.</span>
+  {% endif %}
+
+  <div class="detail-section-title">Shop Images</div>
+  {% if shop.images.all %}
+    <div class="detail-images-row">
+      {% for img in shop.images.all %}
+        <a href="{{ img.image.url }}" target="_blank">
+          <img src="{{ img.image.url }}" alt="Shop Image {{ forloop.counter }}">
+        </a>
+      {% endfor %}
+    </div>
+  {% else %}
+    <span class="text-muted">No shop images uploaded.</span>
+  {% endif %}
+
+  <div class="detail-actions">
+    {% if not shop.is_approved %}
+      <a href="{% url 'approve_shop' shop.id %}" class="btn btn-success">Approve</a>
+      <a href="{% url 'reject_shop' shop.id %}" class="btn btn-danger">Reject</a>
+    {% endif %}
+    <a href="{% url 'manage_shops' %}" class="btn btn-outline-secondary">Back to List</a>
+  </div>
+</div>
+{% endblock %}

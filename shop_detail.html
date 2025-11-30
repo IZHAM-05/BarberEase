@@ -1,0 +1,367 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>{{ shop.shop_name }} — BarberEase</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+  <!-- Bootstrap (optional) -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    :root{
+      --accent-A:#007bff;
+      --accent-B:#00cfe8;
+      --card-bg: #ffffff;
+      --muted:#6c757d;
+    }
+
+    body{
+      font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: #f4f7fb;
+      color: #222;
+      margin:0;
+    }
+
+    .hero {
+      position: relative;
+      height: 56vh;
+      min-height: 320px;
+      width:100%;
+      overflow: hidden;
+      display:block;
+    }
+    .hero .slide {
+      position:absolute;
+      inset:0;
+      background-size: cover;
+      background-position: center center;
+      background-repeat: no-repeat;
+      opacity:0;
+      transition: opacity 1.1s ease-in-out, transform 1.1s ease;
+      transform: scale(1.02);
+      will-change: opacity;
+    }
+    .hero .slide.active {
+      opacity:1;
+      transform: scale(1);
+      z-index: 1;
+    }
+
+    .hero .overlay {
+      position:absolute; inset:0;
+      background: linear-gradient(180deg, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.45) 100%);
+      z-index:2;
+      pointer-events:none;
+    }
+
+    .hero .hero-inner {
+      position:relative;
+      z-index:3;
+      height:100%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      padding: 1.25rem;
+      color:white;
+    }
+    .hero h1{
+      font-size: clamp(1.5rem, 3.8vw, 2.8rem);
+      margin:0 0 .25rem;
+      font-weight:700;
+      letter-spacing: -0.5px;
+      line-height:1.05;
+      text-shadow: 0 6px 20px rgba(0,0,0,0.35);
+    }
+    .hero p.sub {
+      margin:0;
+      color: rgba(255,255,255,0.92);
+      font-weight:500;
+      text-shadow: 0 4px 14px rgba(0,0,0,0.28);
+    }
+
+    .thumb-strip {
+      display:flex;
+      gap:12px;
+      padding: 12px 6px;
+      justify-content:center;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .thumb {
+      width:96px; height:64px;
+      border-radius:8px;
+      overflow:hidden;
+      box-shadow: 0 6px 18px rgba(9,30,66,0.08);
+      cursor:pointer;
+      border: 2px solid rgba(255,255,255,0.06);
+      transition: transform .18s ease, box-shadow .18s ease;
+    }
+    .thumb img{
+      width:100%; height:100%; object-fit:cover;
+      display:block;
+    }
+    .thumb:hover { transform: translateY(-4px); box-shadow: 0 10px 28px rgba(9,30,66,0.12); }
+    .thumb.active { outline: 3px solid rgba(0,207,232,0.85); transform: translateY(-4px); }
+
+    .shop-card {
+      max-width:1100px;
+      margin: -56px auto 28px;
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 18px;
+      box-shadow: 0 12px 40px rgba(17,24,39,0.08);
+      display:flex;
+      gap:20px;
+      align-items:center;
+      justify-content:space-between;
+      border: 1px solid rgba(12,20,40,0.03);
+    }
+    .shop-card .left { display:flex; gap:16px; align-items:center; }
+    .shop-logo {
+      width:92px; height:92px; border-radius:12px; object-fit:cover; display:block;
+      box-shadow: 0 6px 18px rgba(9,30,66,0.06);
+    }
+    .shop-meta h3{ margin:0; font-weight:700; font-size:1.25rem; }
+    .shop-meta p { margin:3px 0 0; color:var(--muted); font-size:.95rem; }
+    .shop-stats { display:flex; gap:14px; align-items:center; color:var(--muted); font-weight:600; }
+
+    .container-main { max-width:1100px; margin: 18px auto 80px; padding: 0 16px; }
+    .section { margin-top:28px; }
+    .section h4 { margin-bottom:14px; font-weight:700; color:#0b2b4a; }
+
+    .posts-grid {
+      display:grid;
+      gap:12px;
+      grid-template-columns: repeat(3, 1fr);
+    }
+    @media (max-width:900px){ .posts-grid{ grid-template-columns: repeat(2,1fr);} .thumb{ width:74px; height:56px; } }
+    @media (max-width:600px){ .posts-grid{ grid-template-columns: 1fr; } .shop-card{ flex-direction:column; align-items:flex-start; } .shop-stats{ margin-top:10px; } }
+
+    .post {
+      background: #fff; border-radius:10px; overflow:hidden; box-shadow: 0 6px 18px rgba(9,30,66,0.06);
+    }
+    .post img { width:100%; height:260px; object-fit:cover; display:block; transition: transform .25s ease; }
+    .post:hover img{ transform: scale(1.03); }
+
+    .services-grid { display:grid; gap:12px; grid-template-columns: repeat(3,1fr); }
+    .service {
+      background:#fff; border-radius:10px; padding:14px; box-shadow:0 6px 18px rgba(9,30,66,0.06);
+      display:flex; flex-direction:column; justify-content:space-between;
+    }
+    .service h5 { margin:0 0 8px; font-weight:700; }
+    .service .price { color:var(--accent-A); font-weight:800; margin-bottom:10px; }
+
+    .review { background:#fff; border-radius:10px; padding:14px; box-shadow:0 6px 18px rgba(9,30,66,0.06); margin-bottom:12px; }
+
+    .modal-img { max-width:100%; height:auto; display:block; margin:auto; border-radius:8px; }
+
+    .muted { color:var(--muted); font-weight:600; font-size:0.95rem; }
+    .center { text-align:center; }
+  </style>
+</head>
+<body>
+
+  <!-- HERO (slides are created server-side) -->
+  <div class="hero" id="hero">
+    {% if shop.images.all %}
+      {% for img in shop.images.all %}
+        <div class="slide {% if forloop.first %}active{% endif %}"
+             style="background-image: url('{{ img.image.url }}');"></div>
+      {% endfor %}
+    {% else %}
+      <!-- fallback: use static default_banner.jpg (single quotes inside static) -->
+       <div class="slide active default-slide"></div>
+    {% endif %}
+
+    <!-- overlay and content must be inside the hero -->
+    <div class="overlay" aria-hidden="true"></div>
+    <div class="hero-inner hero-inner-ctr hero-inner" style="z-index:5;">
+      <div>
+        <h1>{{ shop.shop_name }}</h1>
+        <p class="sub">
+          {% if shop.shop_address %}{{ shop.shop_address }} • {% endif %} 
+          🕒 {% if shop.opening_time %}{{ shop.opening_time }}{% else %}—{% endif %} - {% if shop.closing_time %}{{ shop.closing_time }}{% else %}—{% endif %}
+        </p>
+      </div>
+    </div>
+  </div> <!-- /.hero -->
+
+  <!-- thumbnail strip to control hero -->
+  <div class="thumb-strip center" id="thumbStrip">
+    {% if shop.images.all %}
+      {% for img in shop.images.all %}
+        <div class="thumb {% if forloop.first %}active{% endif %}" data-index="{{ forloop.counter0 }}">
+          <img src="{{ img.image.url }}" alt="thumb-{{ forloop.counter }}">
+        </div>
+      {% endfor %}
+    {% else %}
+      <!-- single thumbnail for default -->
+      <div class="thumb active" data-index="0">
+        <img src="{% static 'images/default_banner.jpg' %}" alt="default-thumb">
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- floating shop info card -->
+  <div class="shop-card" role="region" aria-label="Shop information">
+    <div class="left">
+      <img class="shop-logo" src="{% if shop.images.first %}{{ shop.images.first.image.url }}{% else %}{% static 'images/default_shop.png' %}{% endif %}" alt="{{ shop.shop_name }} logo">
+      <div class="shop-meta">
+        <h3>{{ shop.shop_name }}</h3>
+        <p class="muted">{{ shop.shop_address|default:"Address not provided" }}</p>
+        <div class="shop-stats">
+          <div>{{ shop.services.count }} services</div>
+          <div>•</div>
+          <div>{{ shop.reviews.count }} reviews</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="right">
+      {% if user.is_authenticated and user == shop.usrname %}
+        <a href="{% url 'manage_shop_images' %}" class="btn btn-outline-primary">Manage shop</a>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <main class="container-main">
+    <!-- POSTS / gallery -->
+    <section class="section">
+      <h4>Posts</h4>
+      <div class="posts-grid">
+        {% for img in shop.images.all %}
+          <div class="post">
+            <a href="#" class="open-modal" data-img="{{ img.image.url }}" role="button" aria-label="Open image {{ forloop.counter }}">
+              <img loading="lazy" src="{{ img.image.url }}" alt="post-{{ forloop.counter }}">
+            </a>
+          </div>
+        {% empty %}
+          <p class="muted center">No images yet. Owners can upload images from their dashboard.</p>
+        {% endfor %}
+      </div>
+    </section>
+
+    <!-- SERVICES -->
+    <section class="section">
+      <h4>Services</h4>
+      <div class="services-grid">
+        {% for service in shop.services.all %}
+          <div class="service">
+            <div>
+              <h5>{{ service.service_name }}</h5>
+              <div class="price">₹{{ service.price }}</div>
+            </div>
+            <!-- <div style="margin-top:12px">
+              <a class="btn-future-sm" href="{% url 'book_appointment' shop.id service.id %}">Book Now</a>
+            </div> -->
+          </div>
+        {% empty %}
+          <p class="muted center">No services published yet.</p>
+        {% endfor %}
+      </div>
+    </section>
+
+    <!-- REVIEWS -->
+    <section class="section">
+      <h4>Customer Reviews</h4>
+      {% for review in shop.reviews.all %}
+        <article class="review" role="article" aria-label="review by {{ review.customer.name }}">
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:12px;">
+            <div>
+              <strong>{{ review.customer.name }}</strong>
+              <div class="muted" style="font-weight:600; margin-top:6px;">{{ review.created_at|date:"M d, Y" }}</div>
+            </div>
+            <div style="font-weight:800; color:#f0a500;">⭐ {{ review.rating }}/5</div>
+          </div>
+          <p style="margin-top:10px; color:#333">{{ review.comment }}</p>
+        </article>
+      {% empty %}
+        <p class="muted">No reviews yet — encourage customers to leave a review after a booking.</p>
+      {% endfor %}
+    </section>
+  </main>
+
+  <!-- Image Modal (Bootstrap simplified) -->
+  <div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content" style="background:transparent; border:none;">
+        <div class="modal-body p-0 text-center">
+          <button type="button" class="btn-close position-absolute top-0 end-0 m-3 text-white" data-bs-dismiss="modal" aria-label="Close"></button>
+          <img id="modalImage" src="" alt="large image" class="modal-img" style="max-width:100%; border-radius:10px;" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- bootstrap js -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    (function(){
+      /* Hero slideshow: fade, thumbnails, pause on hover */
+      const slides = Array.from(document.querySelectorAll('.hero .slide'));
+      const thumbs = Array.from(document.querySelectorAll('.thumb'));
+      const heroEl = document.getElementById('hero');
+      let current = 0;
+      let interval = null;
+      const INTERVAL_MS = 4500;
+
+      function showSlide(i){
+        if(!slides.length) return;
+        slides.forEach((s, idx) => s.classList.toggle('active', idx === i));
+        thumbs.forEach((t, idx) => t.classList.toggle('active', idx === i));
+        current = i;
+      }
+
+      function startAuto(){
+        if(slides.length <= 1) return;
+        stopAuto();
+        interval = setInterval(()=> {
+          const next = (current + 1) % slides.length;
+          showSlide(next);
+        }, INTERVAL_MS);
+      }
+      function stopAuto(){ if(interval) { clearInterval(interval); interval = null; } }
+
+      // thumbnail clicks
+      thumbs.forEach(t => {
+        t.addEventListener('click', (e) => {
+          const idx = Number(t.getAttribute('data-index')) || 0;
+          showSlide(idx);
+          stopAuto();
+          setTimeout(startAuto, 3000);
+        });
+      });
+
+      // pause on hover (only if hero exists)
+      if(heroEl){
+        heroEl.addEventListener('mouseenter', stopAuto);
+        heroEl.addEventListener('mouseleave', startAuto);
+      }
+
+      // init
+      showSlide(0);
+      startAuto();
+
+      /* modal open for gallery */
+      const modalEl = document.getElementById('imageModal');
+      const modalImage = document.getElementById('modalImage');
+      const bsModal = new bootstrap.Modal(modalEl);
+      document.querySelectorAll('.open-modal').forEach(a => {
+        a.addEventListener('click', function(e){
+          e.preventDefault();
+          const url = this.getAttribute('data-img');
+          modalImage.src = url;
+          bsModal.show();
+        });
+      });
+
+    })();
+  </script>
+
+</body>
+</html>

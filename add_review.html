@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Add Review | BarberEase{% endblock %}
+
+{% block head %}
+<style>
+.add-review-container {
+  max-width: 460px;
+  margin: 40px auto;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 6px 30px rgba(0,0,0,0.08);
+  padding: 36px 28px 30px 28px;
+}
+.add-review-container h2 {
+  background: linear-gradient(90deg, #0ff, #38bdf8 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 22px;
+  font-weight: 700;
+}
+.rating-stars {
+  display: flex;
+  gap: 8px;
+  font-size: 2rem;
+  margin-bottom: 16px;
+  justify-content: center;
+}
+.rating-stars input[type="radio"] {
+  display: none;
+}
+.rating-stars label {
+  cursor: pointer;
+  color: #e2e8f0;
+  transition: color 0.15s;
+}
+.rating-stars input[type="radio"]:checked ~ label,
+.rating-stars label:hover,
+.rating-stars label:hover ~ label {
+  color: #fbbf24;
+}
+textarea {
+  width: 100%;
+  min-height: 66px;
+  border-radius: 10px;
+  border: 1px solid #0ff;
+  padding: 10px;
+  margin-bottom: 18px;
+}
+.btn-submit {
+  background: linear-gradient(90deg, #0ff, #38bdf8 100%);
+  color: #0f172a;
+  border-radius: 10px;
+  border: none;
+  font-weight: bold;
+  padding: 10px 28px;
+  font-size: 1.1rem;
+  box-shadow: 0 2px 10px #38bdf822;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="add-review-container">
+  <h2 class="text-center">Leave a Review for {{ shop.shop_name }}</h2>
+  <form method="post">
+    {% csrf_token %}
+    <div class="rating-stars justify-content-center mb-3">
+      {% for i in "54321" %}
+        <input type="radio" id="star{{i}}" name="rating" value="{{i}}" {% if forloop.first %}checked{% endif %}>
+        <label for="star{{i}}">&#9733;</label>
+      {% endfor %}
+    </div>
+    <textarea name="comment" placeholder="Share your experience..."></textarea>
+    <div class="text-center">
+      <button type="submit" class="btn btn-submit">Submit Review</button>
+      <a href="{% url 'customer_home' %}" class="btn btn-secondary ms-2">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

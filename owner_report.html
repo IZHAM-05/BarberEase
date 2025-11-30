@@ -1,0 +1,204 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Shop Reports | BarberEase Owner{% endblock %}
+
+{% block head %}
+<style>
+  .owner-reports-dashboard {
+    display: flex;
+    min-height: 80vh;
+    gap: 0;
+  }
+  .sidebar {
+    width: 230px;
+    background: #0f172a;
+    padding: 36px 0 0 0;
+    color: #fff;
+    min-height: 80vh;
+    border-radius: 16px 0 0 16px;
+    box-shadow: 3px 0 16px rgba(0,0,0,0.04);
+    position: relative;
+  }
+  .sidebar h3 {
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 34px;
+    font-size: 1.2rem;
+    letter-spacing: 1.1px;
+    color: #0ff;
+  }
+  .sidebar ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0 0 24px 0;
+  }
+  .sidebar li {
+    margin-bottom: 12px;
+  }
+  .sidebar a {
+    display: block;
+    color: #fff;
+    padding: 12px 28px;
+    text-decoration: none;
+    border-radius: 0 24px 24px 0;
+    transition: background .18s;
+    font-weight: 500;
+    font-size: 1.01rem;
+  }
+  .sidebar a.active, .sidebar a:hover {
+    background: linear-gradient(90deg, #0ff 0%, #38bdf8 100%);
+    color: #0f172a;
+    font-weight: 700;
+  }
+  .main-content {
+    flex: 1;
+    padding: 36px 36px 24px 36px;
+    background: #f3f6fc;
+    border-radius: 0 16px 16px 0;
+  }
+  .overview-row {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 38px;
+    flex-wrap: wrap;
+  }
+  .stat-card {
+    background: #fff;
+    border-radius: 16px;
+    flex: 1 1 180px;
+    min-width: 170px;
+    text-align: center;
+    padding: 28px 0 18px 0;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.04);
+    margin-bottom: 10px;
+  }
+  .stat-value {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #0e7490;
+    margin-bottom: 7px;
+  }
+  .stat-label {
+    color: #64748b;
+    font-size: 1.03rem;
+    font-weight: 500;
+  }
+  .section-title {
+    margin-top: 30px;
+    font-weight: 700;
+    color: #22223b;
+    margin-bottom: 18px;
+    letter-spacing: 1px;
+  }
+  .top-services-row, .top-customers-row {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin-bottom: 30px;
+  }
+  .mini-report-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(12,32,60,0.07);
+    width: 320px;
+    min-width: 210px;
+    max-width: 100%;
+    padding: 16px 18px 12px 18px;
+    margin-bottom: 16px;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .mini-report-card h5 {font-weight: 700; margin-bottom: 8px;}
+  .mini-info {
+    color: #64748b;
+    font-size: 0.97rem;
+    margin-bottom: 4px;
+  }
+  @media (max-width: 900px) {
+    .owner-reports-dashboard { flex-direction: column; }
+    .sidebar { width: 100%; border-radius: 16px 16px 0 0; min-height: fit-content; margin-bottom: 24px; }
+    .main-content { border-radius: 0 0 16px 16px; padding: 24px 7vw 24px 7vw; }
+    .overview-row, .top-services-row, .top-customers-row {
+      flex-direction: column; gap: 14px;
+    }
+    .mini-report-card {width: 100%; min-width:unset;}
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="owner-reports-dashboard">
+  <!-- Sidebar Navigation -->
+  <nav class="sidebar">
+    <h3>My Shop</h3>
+    <ul>
+      <li><a href="{% url 'shopowner_home' %}">Dashboard</a></li>
+      <li><a href="{% url 'manage_services' shop.id %}">Services</a></li>
+      <li><a href="{% url 'manage_shop_images' %}">Manage Shop</a></li>
+      <li><a href="{% url 'owner_appointments' %}">Appointments</a></li>
+      <li><a href="{% url 'owner_reports' %}" class="active">Shop Reports</a></li>
+      <li><a href="{% url 'logout' %}">Logout</a></li>
+    </ul>
+  </nav>
+  <div class="main-content">
+    <h2 class="neon-text mb-2">Shop Reports & Analytics</h2>
+    <p class="text-muted mb-4">Your shop stats and performance insights</p>
+
+    <!-- Overview Row -->
+    <div class="overview-row">
+      <div class="stat-card">
+        <div class="stat-value">{{ shop.services.count }}</div>
+        <div class="stat-label">Services</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">{{ shop.appointments.count }}</div>
+        <div class="stat-label">Appointments</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">{{ shop.reviews.count }}</div>
+        <div class="stat-label">Reviews</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">
+          {{ avg_rating|floatformat:1|default:"-" }}
+        </div>
+        <div class="stat-label">Avg. Rating</div>
+      </div>
+    </div>
+
+    <!-- Top Services by Appointments -->
+    <div class="section-title">Top Services (by Appointments)</div>
+    {% if top_services %}
+      <div class="top-services-row">
+        {% for service in top_services %}
+          <div class="mini-report-card">
+            <h5>{{ service.service_name }}</h5>
+            <div class="mini-info">Appointments: {{ service.app_count }}</div>
+            <div class="mini-info">Price: ₹{{ service.price }}</div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="text-muted">No services or appointments yet.</p>
+    {% endif %}
+
+    <!-- Top Customers by Appointments -->
+    <div class="section-title">Top Customers</div>
+    {% if top_customers %}
+      <div class="top-customers-row">
+        {% for cust in top_customers %}
+          <div class="mini-report-card">
+            <h5>{{ cust.customer__name }}</h5>
+            <div class="mini-info">Appointments: {{ cust.app_count }}</div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="text-muted">No customer appointments yet.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,239 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Customer Detail | BarberEase{% endblock %}
+
+{% block head %}
+<style>
+  .customer-detail-dashboard {
+    display: flex;
+    min-height: 75vh;
+    gap: 0;
+  }
+  .sidebar {
+    width: 230px;
+    background: #0f172a;
+    padding: 36px 0 0 0;
+    color: #fff;
+    min-height: 75vh;
+    border-radius: 16px 0 0 16px;
+    box-shadow: 3px 0 16px rgba(0,0,0,0.04);
+    position: relative;
+  }
+  .sidebar h3 {
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 34px;
+    font-size: 1.2rem;
+    letter-spacing: 1.1px;
+    color: #0ff;
+  }
+  .sidebar ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0 0 24px 0;
+  }
+  .sidebar li {
+    margin-bottom: 12px;
+  }
+  .sidebar a {
+    display: block;
+    color: #fff;
+    padding: 12px 28px;
+    text-decoration: none;
+    border-radius: 0 24px 24px 0;
+    transition: background .18s;
+    font-weight: 500;
+    font-size: 1.01rem;
+  }
+  .sidebar a.active, .sidebar a:hover {
+    background: linear-gradient(90deg, #0ff 0%, #38bdf8 100%);
+    color: #0f172a;
+    font-weight: 700;
+  }
+  .main-content {
+    flex: 1;
+    padding: 36px 36px 24px 36px;
+    background: #f3f6fc;
+    border-radius: 0 16px 16px 0;
+  }
+  .customer-card {
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 4px 24px rgba(12,32,60,0.06);
+    padding: 32px 28px;
+    max-width: 500px;
+    margin: 0 auto 32px auto;
+    text-align: center;
+  }
+  .profile-pic {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: #dbeafe;
+    border: 2px solid #0ff;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    margin-bottom: 16px;
+  }
+  .customer-name {
+    font-weight: 700;
+    font-size: 1.35rem;
+    color: #0e7490;
+    margin-bottom: 8px;
+  }
+  .customer-info-list {
+    list-style: none;
+    margin: 0 0 16px 0;
+    padding: 0;
+    text-align: left;
+    max-width: 350px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .customer-info-list li {
+    margin-bottom: 9px;
+    font-size: 1.06rem;
+    color: #444;
+  }
+  .stats-row {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .stat-card {
+    background: #fff;
+    border-radius: 16px;
+    flex: 1 1 160px;
+    min-width: 120px;
+    text-align: center;
+    padding: 18px 0 12px 0;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.03);
+    margin-bottom: 10px;
+  }
+  .stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #0e7490;
+    margin-bottom: 4px;
+  }
+  .stat-label {
+    color: #64748b;
+    font-size: 1.03rem;
+    font-weight: 500;
+  }
+  .section-title {
+    font-weight: 700;
+    color: #22223b;
+    margin: 28px 0 12px 0;
+    text-align: left;
+  }
+  .list-group {
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+    padding: 14px 16px 10px 16px;
+    margin-bottom: 24px;
+  }
+  .list-group-item {
+    border-bottom: 1px solid #f2f2f2;
+    padding: 7px 0 11px 0;
+    background: transparent;
+  }
+  .list-group-item:last-child {
+    border-bottom: none;
+  }
+  .review-rating {
+    color: #fbbf24;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .back-btn {
+    margin-bottom: 18px;
+  }
+  @media (max-width: 900px) {
+    .customer-detail-dashboard { flex-direction: column; }
+    .sidebar { width: 100%; border-radius: 16px 16px 0 0; min-height: fit-content; }
+    .main-content { border-radius: 0 0 16px 16px; padding: 24px 7vw 24px 7vw; }
+    .stats-row { flex-direction: column; gap: 12px; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="customer-detail-dashboard">
+  <!-- Sidebar Navigation -->
+  <nav class="sidebar">
+    {% if user.usertype == "Admin" %}
+      <h3>Admin</h3>
+      <ul>
+        <li><a href="{% url 'Admin_home' %}">Dashboard</a></li>
+        <li><a href="{% url 'manage_shops' %}">Manage Shops</a></li>
+        <li><a href="{% url 'manage_customers' %}" class="active">Customers</a></li>
+        <li><a href="{% url 'manage_appointments' %}">Appointments</a></li>
+        <li><a href="{% url 'reports' %}">Reports</a></li>
+        <li><a href="{% url 'logout' %}">Logout</a></li>
+      </ul>
+    {% elif user.usertype == "Owner" %}
+      <h3>Owner</h3>
+      <ul>
+        <li><a href="{% url 'shopowner_home' %}">Dashboard</a></li>
+        <li><a href="{% url 'manage_services' user.shops.first.id %}">Services</a></li>
+        <li><a href="{% url 'manage_shop_images' %}">Images</a></li>
+        <li><a href="{% url 'manage_appointments' %}">Appointments</a></li>
+        <li><a href="{% url 'manage_customers' %}" class="active">Customers</a></li>
+        <li><a href="{% url 'logout' %}">Logout</a></li>
+      </ul>
+    {% endif %}
+  </nav>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <a class="btn btn-secondary back-btn" href="{% url 'manage_customers' %}">&larr; Back to Customers</a>
+    <div class="customer-card">
+      <img src="{% if customer.profile_pic %}{{ customer.profile_pic.url }}{% else %}{% static 'images/default-avatar.png' %}{% endif %}" class="profile-pic" alt="Profile Picture">
+      <div class="customer-name">{{ customer.name }}</div>
+      <ul class="customer-info-list">
+        <li><strong>Username:</strong> {{ customer.usrname.username }}</li>
+        <li><strong>Email:</strong> {{ customer.email }}</li>
+        <li><strong>Gender:</strong> {{ customer.gender|default:"-" }}</li>
+        <li><strong>Phone:</strong> {{ customer.phone|default:"-" }}</li>
+      </ul>
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-value">{{ customer.appointments.count }}</div>
+          <div class="stat-label">Appointments</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">{{ customer.reviews.count }}</div>
+          <div class="stat-label">Reviews</div>
+        </div>
+      </div>
+    </div>
+    <div class="section-title">Appointments</div>
+    <ul class="list-group">
+      {% for app in customer.appointments.all %}
+        <li class="list-group-item">
+          <strong>{{ app.shop.shop_name }}</strong> — {{ app.service.service_name }}<br>
+          Date: {{ app.date }} ({{ app.get_status_display }})
+        </li>
+      {% empty %}
+        <li class="list-group-item">No appointments yet.</li>
+      {% endfor %}
+    </ul>
+    <div class="section-title">Reviews</div>
+    <ul class="list-group">
+      {% for rev in customer.reviews.all %}
+        <li class="list-group-item">
+          <strong>Shop:</strong> {{ rev.shop.shop_name }}<span class="review-rating">⭐{{ rev.rating }}</span><br>
+          {{ rev.comment|default:"No comment." }}
+        </li>
+      {% empty %}
+        <li class="list-group-item">No reviews yet.</li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+{% endblock %}

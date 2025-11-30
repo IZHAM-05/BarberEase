@@ -1,0 +1,223 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Manage Customers | BarberEase Admin{% endblock %}
+
+{% block head %}
+<style>
+  .admin-manage-customers {
+    display: flex;
+    min-height: 80vh;
+    gap: 0;
+  }
+  .sidebar {
+    width: 230px;
+    background: #0f172a;
+    padding: 36px 0 0 0;
+    color: #fff;
+    min-height: 80vh;
+    border-radius: 16px 0 0 16px;
+    box-shadow: 3px 0 16px rgba(0,0,0,0.04);
+    position: relative;
+  }
+  .sidebar h3 {
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 34px;
+    font-size: 1.2rem;
+    letter-spacing: 1.1px;
+    color: #0ff;
+  }
+  .sidebar ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0 0 24px 0;
+  }
+  .sidebar li {
+    margin-bottom: 12px;
+  }
+  .sidebar a {
+    display: block;
+    color: #fff;
+    padding: 12px 28px;
+    text-decoration: none;
+    border-radius: 0 24px 24px 0;
+    transition: background .18s;
+    font-weight: 500;
+    font-size: 1.01rem;
+  }
+  .sidebar a.active, .sidebar a:hover {
+    background: linear-gradient(90deg, #0ff 0%, #38bdf8 100%);
+    color: #0f172a;
+    font-weight: 700;
+  }
+  .main-content {
+    flex: 1;
+    padding: 36px 36px 24px 36px;
+    background: #f3f6fc;
+    border-radius: 0 16px 16px 0;
+  }
+  .stats-row {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 35px;
+    flex-wrap: wrap;
+  }
+  .stat-card {
+    background: #fff;
+    border-radius: 16px;
+    flex: 1 1 180px;
+    min-width: 145px;
+    text-align: center;
+    padding: 24px 0 14px 0;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.04);
+    margin-bottom: 10px;
+  }
+  .stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #0e7490;
+    margin-bottom: 4px;
+  }
+  .stat-label {
+    color: #64748b;
+    font-size: 1.03rem;
+    font-weight: 500;
+  }
+  .customer-cards-row {
+    display: flex;
+    gap: 22px;
+    flex-wrap: wrap;
+    margin-bottom: 30px;
+  }
+  .customer-card {
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 8px 30px rgba(12,32,60,0.07);
+    width: 330px;
+    min-width: 290px;
+    max-width: 100%;
+    padding: 0 0 18px 0;
+    margin-bottom: 16px;
+    transition: transform .17s;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .customer-card:hover {transform: scale(1.04);}
+  .customer-pic {
+    width: 100%;
+    height: 110px;
+    border-radius: 18px 18px 0 0;
+    object-fit: cover;
+    background: #e0e7ef;
+    object-position: center 15%;
+  }
+  .customer-card-body {padding: 20px 18px 0 18px;}
+  .customer-card h5 {font-weight: 700;}
+  .customer-username {
+    color: #0e7490;
+    font-weight: 600;
+    margin-bottom: 3px;
+  }
+  .customer-info {
+    color: #64748b;
+    font-size: 0.97rem;
+    margin-bottom: 2px;
+  }
+  .customer-card-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 11px;
+    align-items: center;
+  }
+  .btn-view {
+    background: linear-gradient(90deg,#0ff,#38bdf8);
+    color: #0f172a;
+    border-radius: 22px;
+    padding: 7px 18px;
+    font-weight: 700;
+    box-shadow: 0 2px 10px #38bdf822;
+    border: none;
+    transition: box-shadow .18s;
+    font-size: 1rem;
+  }
+  .btn-view:hover {
+    box-shadow: 0 2px 18px #0ff8;
+    background: linear-gradient(90deg,#38bdf8,#0ff);
+    color: #162033;
+  }
+  @media (max-width: 900px) {
+    .admin-manage-customers { flex-direction: column; }
+    .sidebar {
+      width: 100%;
+      border-radius: 16px 16px 0 0;
+      min-height: fit-content;
+      margin-bottom: 24px;
+    }
+    .main-content {
+      border-radius: 0 0 16px 16px;
+      padding: 24px 7vw 24px 7vw;
+    }
+    .stats-row, .customer-cards-row {
+      flex-direction: column;
+      gap: 14px;
+    }
+    .customer-card {width: 100%; min-width:unset;}
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-manage-customers">
+  <!-- Sidebar Navigation (optional; remove if you want just top nav) -->
+  <nav class="sidebar">
+    <h3>Admin</h3>
+    <ul>
+      <li><a href="{% url 'Admin_home' %}">Dashboard</a></li>
+      <li><a href="{% url 'manage_shops' %}">Manage Shops</a></li>
+      <li><a href="{% url 'manage_customers' %}" class="active">Customers</a></li>
+      <li><a href="{% url 'manage_appointments' %}">Appointments</a></li>
+      <li><a href="{% url 'reports' %}">Reports</a></li>
+      <li><a href="{% url 'logout' %}">Logout</a></li>
+    </ul>
+  </nav>
+  <div class="main-content">
+    <!-- Stats Row -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-value">{{ customers|length }}</div>
+        <div class="stat-label">Total Customers</div>
+      </div>
+        <div class="stat-card">
+            <div class="stat-value">
+              {{ max_appointments }}
+            </div>
+            <div class="stat-label">Max Appointments (per customer)</div>
+          </div>
+    </div>
+    <!-- Customers List -->
+    <h4 class="mb-3">All Customers</h4>
+    <div class="customer-cards-row">
+      {% for cust in customers %}
+        <div class="customer-card glass">
+          <img src="{% if cust.profile_pic %}{{ cust.profile_pic.url }}{% else %}{% static 'images/default-avatar.png' %}{% endif %}" alt="{{ cust.name }}" class="customer-pic">
+          <div class="customer-card-body">
+            <h5>{{ cust.name }}</h5>
+            <div class="customer-username">Username: {{ cust.usrname.username }}</div>
+            <div class="customer-info">Email: {{ cust.email }}</div>
+            <div class="customer-info">Appointments: {{ cust.appointments.count }}</div>
+            <div class="customer-info">Reviews: {{ cust.reviews.count }}</div>
+            <div class="customer-card-actions mt-2">
+              <a href="{% url 'customer_detail' cust.id %}" class="btn-view">View Profile</a>
+            </div>
+          </div>
+        </div>
+      {% empty %}
+        <p class="text-muted">No customers found.</p>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

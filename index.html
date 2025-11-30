@@ -1,0 +1,374 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}BarberEase | Find & Book Your Next Haircut{% endblock %}
+
+{% block head %}
+<style>
+  .hero-next {
+    min-height: 70vh;
+    background: linear-gradient(120deg, #0f172a 70%, #38bdf8 100%);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    position: relative;
+    padding: 70px 0 40px 0;
+  }
+  .hero-content {
+    max-width: 700px;
+    text-align: center;
+    z-index: 2;
+    position: relative;
+  }
+  .hero-next h1 {
+    font-size: 3.2rem;
+    font-weight: 800;
+    margin-bottom: 18px;
+    letter-spacing: -1.5px;
+    background: linear-gradient(90deg, #fff 60%, #0ff 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    line-height: 1.1;
+  }
+  .hero-next p {
+    font-size: 1.25rem;
+    color: #bae6fd;
+    margin-bottom: 28px;
+    font-weight: 500;
+  }
+  .hero-btns .btn {
+    font-size: 1.15rem;
+    font-weight: 700;
+    padding: 12px 32px;
+    border-radius: 26px;
+    margin: 0 10px;
+  }
+  .hero-graphic {
+    position: absolute;
+    right: 4vw;
+    bottom: 0;
+    width: 340px;
+    opacity: 0.08;
+    z-index: 0;
+  }
+  .feature-section {
+    padding: 70px 0 40px 0;
+    background: #f3f6fc;
+  }
+  .features-list {
+    display: flex;
+    gap: 38px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 40px;
+  }
+  .feature-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 28px rgba(0,0,0,0.06);
+    flex: 1 1 220px;
+    min-width: 230px;
+    max-width: 320px;
+    padding: 38px 30px 34px 30px;
+    text-align: center;
+    margin-bottom: 16px;
+    transition: transform .16s;
+  }
+  .feature-card:hover { transform: translateY(-6px) scale(1.04);}
+  .feature-card .icon {
+    font-size: 2.6rem;
+    margin-bottom: 14px;
+    color: #0ff;
+  }
+  .feature-card h4 {
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 6px;
+  }
+  .feature-card p {color: #64748b;}
+  .howitworks-section {
+    padding: 70px 0 35px 0;
+    background: #fff;
+  }
+  .steps-row {
+    display: flex;
+    justify-content: center;
+    gap: 44px;
+    flex-wrap: wrap;
+    margin-top: 30px;
+  }
+  .step-card {
+    background: #f1f5fa;
+    border-radius: 14px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+    text-align: center;
+    max-width: 250px;
+    padding: 30px 20px 24px 20px;
+    min-width: 200px;
+  }
+  .step-card .step-num {
+    display: inline-block;
+    background: linear-gradient(90deg,#0ff,#38bdf8);
+    color: #fff;
+    border-radius: 50%;
+    font-size: 1.2rem;
+    font-weight: 700;
+    width: 36px; height: 36px;
+    line-height: 36px;
+    margin-bottom: 13px;
+  }
+  .step-card h5 {font-weight: 700; margin-bottom: 7px;}
+  .shop-section {
+    background: #f3f6fc;
+    padding: 70px 0 50px 0;
+    text-align: center;
+  }
+  .shop-cards-row {
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 24px;
+  }
+  .shop-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(12,32,60,0.07);
+    width: 330px;
+    padding: 0 0 18px 0;
+    margin-bottom: 16px;
+    transition: transform .17s;
+    text-align: left;
+  }
+  .shop-card:hover {transform: scale(1.04);}
+  .shop-card img {width: 100%; border-radius: 16px 16px 0 0; height: 180px; object-fit: cover;}
+  .shop-card .card-body {padding: 20px;}
+  .shop-card h5 {font-weight: 700;}
+  .shop-card .btn {margin-top: 10px;}
+  .testimonial-section {
+    background: #fff;
+    padding: 70px 0 40px 0;
+  }
+  .testimonial-cards-row {
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 24px;
+  }
+  .testimonial-card {
+    background: #f1f5fa;
+    border-radius: 16px;
+    width: 340px;
+    padding: 28px 28px 22px 28px;
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+    margin-bottom: 10px;
+  }
+  .testimonial-card img {
+    width: 66px;
+    height: 66px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 12px;
+    border: 2px solid #0ff;
+    background: #e0e7ef;
+  }
+  .testimonial-card .customer-name {
+    font-weight: 700;
+    color: #0f172a;
+    margin-top: 5px;
+    margin-bottom: 7px;
+  }
+  .testimonial-card .stars {
+    color: #fbbf24; font-size: 1.12rem;
+    margin-bottom: 8px;
+  }
+  .footer-section {
+    background: #0f172a;
+    color: #bae6fd;
+    padding: 40px 0 18px 0;
+    text-align: center;
+    font-size: 1.01rem;
+  }
+  .footer-links a {
+    color: #bae6fd; margin: 0 16px; text-decoration: underline;
+  }
+  @media (max-width: 900px) {
+    .features-list, .steps-row, .shop-cards-row, .testimonial-cards-row {flex-direction: column; gap: 20px;}
+    .hero-next h1 {font-size: 2.1rem;}
+    .hero-graphic {display: none;}
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- HERO SECTION -->
+<section class="hero-next">
+  <div class="hero-content">
+    <h1>Book Your Next Haircut <br>In Seconds, Not Hours</h1>
+    <p>BarberEase connects you with top-rated barbershops. Schedule, review, and glow—no waiting, no hassle.</p>
+    <div class="hero-btns mb-3">
+      <a href="{% url 'login' %}" class="btn btn-glow">Get Started</a>
+      <a href="#features" class="btn btn-glow-outline">See How It Works</a>
+    </div>
+    <!-- <form class="row g-2 justify-content-center mt-4" method="get" action="#">
+      <div class="col-md-5 col-12 mb-2 mb-md-0">
+        <input type="text" class="form-control" placeholder="Search Barbershop...">
+      </div>
+      <div class="col-md-4 col-12 mb-2 mb-md-0">
+        <input type="date" class="form-control">
+      </div>
+      <div class="col-md-3 col-12">
+        <button type="submit" class="btn-glow w-100">Search</button>
+      </div>
+    </form> -->
+  </div>
+  <img src="{% static 'images/barber4 (1).jpg' %}" class="hero-graphic" alt="BarberEase Graphic">
+</section>
+
+<!-- FEATURES SECTION -->
+<section class="feature-section" id="features">
+  <div class="container">
+    <h2 class="neon-text text-center mb-2">Why BarberEase?</h2>
+    <div class="features-list">
+      <div class="feature-card">
+        <div class="icon">💈</div>
+        <h4>Book Instantly</h4>
+        <p>Reserve your slot in your favorite shop in seconds, no calls or queues.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">🛡️</div>
+        <h4>Verified Barbers</h4>
+        <p>All barbershops are vetted and reviewed by real customers.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">⏰</div>
+        <h4>No Waiting</h4>
+        <p>Pick a time that works for you—no more sitting around.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">⭐</div>
+        <h4>Real Reviews</h4>
+        <p>Check ratings and feedback before booking your cut.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS SECTION -->
+<section class="howitworks-section" id="howitworks">
+  <div class="container">
+    <h2 class="neon-text text-center mb-3">How It Works</h2>
+    <div class="steps-row">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <h5>Sign Up</h5>
+        <p>Create your free customer or barbershop owner account.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <h5>Discover & Book</h5>
+        <p>Search by location or rating, choose a service, and book a slot.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <h5>Show Up & Glow</h5>
+        <p>Visit your chosen shop, enjoy your service, and leave a review!</p>
+      </div>
+    </div>
+    <div class="text-center mt-4">
+      <a href="{% url 'login' %}" class="btn btn-glow">Get Started</a>
+      <a href="#" class="btn btn-glow-outline" data-bs-toggle="modal" data-bs-target="#signupChoiceModal">Sign Up</a>
+    </div>
+  </div>
+</section>
+
+<!-- POPULAR SHOPS SECTION -->
+<section class="shop-section" id="shops">
+  <div class="container">
+    <h2 class="neon-text mb-4">Popular Barbershops</h2>
+    <div class="shop-cards-row">
+      <!-- Example shop cards, replace with real data or loop -->
+      <div class="shop-card">
+        <img src="{% static 'images/barber1.jpg' %}" alt="Urban Cuts">
+        <div class="card-body">
+          <h5>Urban Cuts</h5>
+          <p class="text-muted mb-1">Trendy cuts & premium grooming.</p>
+          <!-- <a href="#" class="btn btn-glow-sm">View Shop</a> -->
+        </div>
+      </div>
+      <div class="shop-card">
+        <img src="{% static 'images/barber2.jpg' %}" alt="The Classic Barber">
+        <div class="card-body">
+          <h5>The Classic Barber</h5>
+          <p class="text-muted mb-1">Classic haircuts & beard trims.</p>
+          <!-- <a href="#" class="btn btn-glow-sm">View Shop</a> -->
+        </div>
+      </div>
+      <div class="shop-card">
+        <img src="{% static 'images/trending1.jpg' %}" alt="Luxury Styles">
+        <div class="card-body">
+          <h5>Luxury Styles</h5>
+          <p class="text-muted mb-1">Luxury grooming & styling.</p>
+          <!-- <a href="#" class="btn btn-glow-sm">View Shop</a> -->
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS SECTION -->
+<!-- TESTIMONIALS SECTION -->
+<section class="testimonial-section">
+  <div class="container">
+    <h2 class="neon-text mb-4 text-center">What Customers Say</h2>
+    <div class="testimonial-cards-row">
+      {% for review in reviews %}
+        <div class="testimonial-card">
+          <img src="{% if review.customer.profile_pic %}{{ review.customer.profile_pic.url }}{% else %}{% static 'images/default-avatar.png' %}{% endif %}" alt="{{ review.customer.name }}">
+          <div class="customer-name">{{ review.customer.name }}</div>
+          <div class="stars">
+            {% for i in "12345"|slice:":review.rating"|make_list %}
+              ⭐
+            {% endfor %}
+          </div>
+          <p>{{ review.comment|default:"No comment." }}</p>
+        </div>
+      {% empty %}
+        <p class="text-muted">No customer reviews yet.</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER SECTION -->
+<footer class="footer-section">
+  <div class="footer-links mb-2">
+    <a href="#">About</a> | <a href="#">Contact</a> | <a href="#">Terms</a> | <a href="#">Privacy</a>
+  </div>
+  <div>&copy; 2025 BarberEase. All rights reserved.</div>
+</footer>
+
+<!-- Signup Choice Modal -->
+<div class="modal fade" id="signupChoiceModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content glass p-4">
+      <div class="modal-header border-0">
+        <h5 class="modal-title neon-text">Choose Account Type</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body text-center">
+        <p class="mb-4" style="color: darkcyan;">Are you signing up as a customer or creating a barbershop profile?</p>
+        <div class="d-flex justify-content-center gap-3">
+          <a href="/signup/customer" class="btn-glow">Customer</a>
+          <a href="/signup/owner" class="btn-glow-outline">Barbershop Owner</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
